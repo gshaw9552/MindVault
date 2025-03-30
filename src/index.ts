@@ -138,7 +138,7 @@ app.delete("/api/v1/content", userMiddleware, async (req, res) => {
   }
 });
 
-app.post("/api/v1/brain/share", async (req, res) => {
+app.post("/api/v1/brain/share", userMiddleware, async (req, res) => {
   const share = req.body.share;
   if (share) {
     const existingLink = await LinkModel.findOne({
@@ -171,29 +171,34 @@ app.post("/api/v1/brain/share", async (req, res) => {
   }
 });
 
-app.post("/api/v1/brain/:shareLink", async (req, res) => {
+app.get("/api/v1/brain/:shareLink", async (req, res) => {
   try {
-    const hash = req.params.shareLink;
+    // Log the incoming shareLink parameter for debugging
+    const hash = req.params.shareLink.trim();
+    console.log("Received shareLink hash:", hash);
 
-    const link = await LinkModel.findOne({
-      hash,
-    });
-
+    const link = await LinkModel.findOne({ hash });
     if (!link) {
+      console.error("Link not found for hash:", hash);
       res.status(404).json({
         message: "Link not found",
       });
       return;
     }
+    
+    // Log the found link document
+    console.log("Found link:", link);
+
     const content = await ContentModel.find({
       userId: link.userId,
     });
-    console.log(link);
+    console.log("Found content for user:", content);
+
     const user = await UserModel.findOne({
       _id: link.userId,
     });
-
     if (!user) {
+      console.error("User not found for id:", link.userId);
       res.status(404).json({
         message: "User not found",
       });
@@ -205,7 +210,7 @@ app.post("/api/v1/brain/:shareLink", async (req, res) => {
       content: content,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error in /api/v1/brain/:shareLink:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
