@@ -15,6 +15,7 @@ interface ContentItem {
 }
 
 function Dashboard() {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [modalOpen, setModalOpen] = useState(false)
   const [contentList, setContentList] = useState<ContentItem[]>([])
 
@@ -77,8 +78,8 @@ function Dashboard() {
   return (
     <>
       <div>
-        <Sidebar />
-        <div className='p-4 ml-72 min-h-screen bg-gray-100 border-2'>
+        <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+        <div className={`p-4 ${sidebarOpen ? "ml-72" : "ml-15"} min-h-screen bg-gray-100 border-2`}>
           <CreateContentModal
             open={modalOpen}
             onClose={() => {
