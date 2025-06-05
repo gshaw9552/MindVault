@@ -6,9 +6,9 @@ import { Input } from "../components/Input";
 import { BACKEND_URL } from "../config";
 
 export function Signup() {
-  const usernameRef = useRef<HTMLInputElement>();
-  const emailRef = useRef<HTMLInputElement>();
-  const passwordRef = useRef<HTMLInputElement>();
+  const usernameRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
 
   async function signup() {
     const username = usernameRef.current?.value;
