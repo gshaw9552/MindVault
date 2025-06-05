@@ -1,6 +1,9 @@
 import { ReactElement } from "react";
 
 interface ButtonProps {
+  /** Now include HTML button types */
+  type?: "button" | "submit" | "reset";
+
   variant: "primary" | "secondary" | "danger" | "outline";
   text: string;
   startIcon?: ReactElement;
@@ -21,6 +24,7 @@ const defaultStyles = "px-4 py-2 rounded-md font-light flex items-center";
 
 export function Button(props: ButtonProps) {
   const {
+    type = "button",   // default type is "button" unless overwritten
     variant,
     text,
     startIcon,
@@ -41,6 +45,7 @@ export function Button(props: ButtonProps) {
 
   return (
     <button
+      type={type}
       onClick={onClick}
       className={classes}
       disabled={loading}

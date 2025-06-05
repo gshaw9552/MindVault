@@ -4,6 +4,7 @@ import { LightBulb } from "../icons/LightBulb";
 import { Logo } from "../icons/Logo";
 import { UploadIcon } from "../icons/UploadIcon";
 
+
 export function Home() {
   const navigate = useNavigate();
   

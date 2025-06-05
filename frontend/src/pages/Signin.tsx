@@ -36,8 +36,8 @@ export function Signin() {
         <h2 className="text-2xl font-semibold text-center mb-4">Sign In</h2>
 
         <div className="space-y-3">
-          <Input placeholder="Username or Email" ref={identifierRef} />
-          <Input placeholder="Password" type="password" ref={passwordRef} />
+          <Input placeholder="Username or Email" inputRef={identifierRef} />
+          <Input placeholder="Password" type="password" inputRef={passwordRef} />
           <Button onClick={signin} variant="primary" text="Sign In" fullWidth={true} loading={false} />
         </div>
 

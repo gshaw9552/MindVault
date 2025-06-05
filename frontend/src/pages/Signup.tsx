@@ -31,9 +31,9 @@ export function Signup() {
         <h2 className="text-2xl font-semibold text-center mb-4">Sign Up</h2>
 
         <div className="space-y-3">
-          <Input ref={usernameRef} placeholder="Username" />
-          <Input ref={emailRef} placeholder="Email" type="email" />
-          <Input ref={passwordRef} placeholder="Password" type="password" />
+          <Input inputRef={usernameRef} placeholder="Username" />
+          <Input inputRef={emailRef} placeholder="Email" type="email" />
+          <Input inputRef={passwordRef} placeholder="Password" type="password" />
           <Button onClick={signup} variant="primary" text="Sign Up" fullWidth={true} loading={false} />
         </div>
 

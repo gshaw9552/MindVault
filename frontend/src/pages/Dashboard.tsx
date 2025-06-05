@@ -1,131 +1,145 @@
-import { useEffect, useState } from 'react'
-import { Button } from '../components/Buttons'
-import { Card } from '../components/Card'
-import { CreateContentModal } from '../components/CreateContentModal'
-import { PlusIcon } from '../icons/PlusIcon'
-import { ShareIcon } from '../icons/ShareIcon'
-import { Sidebar } from '../components/Sidebar'
-import { API_BASE } from '../config'
+import { useEffect, useState } from "react";
+import { Button } from "../components/Buttons";
+import { Card } from "../components/Card";
+import { CreateContentModal } from "../components/CreateContentModal";
+import { PlusIcon } from "../icons/PlusIcon";
+import { ShareIcon } from "../icons/ShareIcon";
+import { Sidebar } from "../components/Sidebar";
+import { API_BASE } from "../config";
 
 interface ContentItem {
-  _id: string
-  title: string
-  link: string
-  type: string
+  _id: string;
+  title: string;
+  link: string;
+  type: string;
 }
 
 function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [modalOpen, setModalOpen] = useState(false)
-  const [contentList, setContentList] = useState<ContentItem[]>([])
+  const [modalOpen, setModalOpen] = useState(false);
+  const [contentList, setContentList] = useState<ContentItem[]>([]);
 
-  // ↳ Move handleDelete here so it can call setContentList
+  // DELETE handler
   async function handleDelete(contentId: string) {
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem("token");
     if (!token) {
-      alert('You must be signed in to delete.')
-      return
+      alert("You must be signed in to delete.");
+      return;
     }
-    if (!window.confirm('Delete this item?')) return
+    if (!window.confirm("Delete this item?")) return;
 
     try {
       const res = await fetch(`${API_BASE}/content`, {
-        method: 'DELETE',
+        method: "DELETE",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ contentId }),
-      })
+      });
       if (!res.ok) {
-        const err = await res.json()
-        throw new Error(err.message || 'Delete failed')
+        const err = await res.json();
+        throw new Error(err.message || "Delete failed");
       }
-      // remove it from state
-      setContentList((prev) => prev.filter((i) => i._id !== contentId))
+      // Remove from state
+      setContentList((prev) => prev.filter((i) => i._id !== contentId));
     } catch (e: any) {
-      console.error('Delete error:', e)
-      alert('Failed to delete: ' + e.message)
+      console.error("Delete error:", e);
+      alert("Failed to delete: " + e.message);
     }
   }
 
+  // GET existing content on mount
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (!token) return
+    const token = localStorage.getItem("token");
+    if (!token) return;
 
     fetch(`${API_BASE}/content`, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
     })
       .then(async (res) => {
         if (!res.ok) {
-          return [] as ContentItem[]
+          return [] as ContentItem[];
         }
-        const data = await res.json()
-        return data.content as ContentItem[]
+        const data = await res.json();
+        return data.content as ContentItem[];
       })
       .then((items) => {
-        setContentList(items)
+        setContentList(items);
       })
       .catch((err) => {
-        console.error('Fetch Content Error:', err)
-      })
-  }, [])
+        console.error("Fetch Content Error:", err);
+      });
+  }, []);
+
+  // CREATE handler
+  const handleCreateContent = async (data: {
+    title: string;
+    link: string;
+    type: string;
+  }) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("You must be signed in to add content.");
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/content`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || "Create content failed");
+      }
+      // Assume backend returns the newly created item
+      const createdItem = await res.json();
+      setContentList((prev) => [...prev, createdItem]);
+    } catch (e: any) {
+      console.error("Create content error:", e);
+      alert("Failed to add content: " + e.message);
+    }
+  };
 
   return (
     <>
       <div>
         <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-        <div className={`p-4 ${sidebarOpen ? "ml-72" : "ml-15"} min-h-screen bg-gray-100 border-2`}>
+        <div
+          className={`p-4 ${sidebarOpen ? "ml-72" : "ml-15"
+            } min-h-screen bg-gray-100 border-2`}
+        >
+          {/* CreateContentModal */}
           <CreateContentModal
             open={modalOpen}
-            onClose={() => {
-              setModalOpen(false)
-            }}
+            onClose={() => setModalOpen(false)}
+            onSubmit={handleCreateContent}
           />
-          <div className='flex justify-end gap-4 mb-2'>
+
+          {/* “Add Content” + “Share Brain” Buttons */}
+          <div className="flex justify-end gap-4 mb-2">
             <Button
-              onClick={() => {
-                setModalOpen(true)
-              }}
-              variant='primary'
-              text='Add Content'
+              onClick={() => setModalOpen(true)}
+              variant="primary"
+              text="Add Content"
               startIcon={<PlusIcon />}
             />
-            <Button variant='secondary' text='Share Brain' startIcon={<ShareIcon />} />
+            <Button variant="secondary" text="Share Brain" startIcon={<ShareIcon />} />
           </div>
-          {/* === TEMPORARY: Render some static Card components for layout testing === */}
-          {/* 
-          <div className="flex flex-wrap gap-4">
-            <Card
-              title="Sample Video"
-              link="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-              type="youtube"
-            />
-            <Card
-              title="Example Tweet"
-              link="https://x.com/example/status/1234567890"
-              type="twitter"
-            />
-            <Card
-              title="Interesting Article"
-              link="https://example.com/article"
-              type="link"
-            />
-            <Card
-              title="Music Clip"
-              link="https://soundcloud.com/example"
-              type="music"
-            />
-          </div>
-          */}
-          {/* === End temporary cards === */}
-          <div className='flex flex-wrap gap-8 justify-center'>
+
+          {/* List of Content Cards */}
+          <div className="flex flex-wrap gap-8 justify-center">
             {contentList.map((item) => (
-              <div key={item._id} className='relative'>
+              <div key={item._id} className="relative">
                 <Card
                   title={item.title}
                   link={item.link}
@@ -138,7 +152,7 @@ function Dashboard() {
         </div>
       </div>
     </>
-  )
+  );
 }
 
-export default Dashboard
+export default Dashboard;
