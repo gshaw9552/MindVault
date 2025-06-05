@@ -1,156 +1,48 @@
-import { useEffect, useState } from "react";
+// frontend/src/pages/Dashboard.tsx
+import { useState } from "react";
 import { Button } from "../components/Buttons";
-import { Card } from "../components/Card";
 import { CreateContentModal } from "../components/CreateContentModal";
 import { PlusIcon } from "../icons/PlusIcon";
 import { ShareIcon } from "../icons/ShareIcon";
-import { Sidebar } from "../components/Sidebar";
-import { API_BASE } from "../config";
-
-interface ContentItem {
-  _id: string;
-  title: string;
-  link: string;
-  type: string;
-}
+import { Layout } from "../components/Layout";
+import { ContentGrid } from "../components/ContentGrid";
+import { useContent } from "../hooks/useContent";
 
 function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
-  const [contentList, setContentList] = useState<ContentItem[]>([]);
 
-  // DELETE handler
-  async function handleDelete(contentId: string) {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("You must be signed in to delete.");
-      return;
-    }
-    if (!window.confirm("Delete this item?")) return;
-
-    try {
-      const res = await fetch(`${API_BASE}/content`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ contentId }),
-      });
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.message || "Delete failed");
-      }
-      // Remove from state
-      setContentList((prev) => prev.filter((i) => i._id !== contentId));
-    } catch (e: any) {
-      console.error("Delete error:", e);
-      alert("Failed to delete: " + e.message);
-    }
-  }
-
-  // GET existing content on mount
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
-    fetch(`${API_BASE}/content`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then(async (res) => {
-        if (!res.ok) {
-          return [] as ContentItem[];
-        }
-        const data = await res.json();
-        return data.content as ContentItem[];
-      })
-      .then((items) => {
-        setContentList(items);
-      })
-      .catch((err) => {
-        console.error("Fetch Content Error:", err);
-      });
-  }, []);
-
-  // CREATE handler
-  const handleCreateContent = async (data: {
-    title: string;
-    link: string;
-    type: string;
-  }) => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("You must be signed in to add content.");
-      return;
-    }
-
-    try {
-      const res = await fetch(`${API_BASE}/content`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(data),
-      });
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.message || "Create content failed");
-      }
-      // Assume backend returns the newly created item
-      const createdItem = await res.json();
-      setContentList((prev) => [...prev, createdItem]);
-    } catch (e: any) {
-      console.error("Create content error:", e);
-      alert("Failed to add content: " + e.message);
-    }
-  };
+  // Use the custom hook for all content-related operations
+  const { contentList, loading, error, createContent, deleteContent } = useContent();
 
   return (
     <>
-      <div>
-        <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-        <div
-          className={`p-4 ${sidebarOpen ? "ml-72" : "ml-15"
-            } min-h-screen bg-gray-100 border-2`}
-        >
-          {/* CreateContentModal */}
-          <CreateContentModal
-            open={modalOpen}
-            onClose={() => setModalOpen(false)}
-            onSubmit={handleCreateContent}
+      <Layout sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}>
+        {/* Add Content Modal */}
+        <CreateContentModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onSubmit={createContent}
+        />
+
+        {/* Buttons */}
+        <div className="flex justify-end gap-4 mb-2">
+          <Button
+            onClick={() => setModalOpen(true)}
+            variant="primary"
+            text="Add Content"
+            startIcon={<PlusIcon />}
           />
-
-          {/* “Add Content” + “Share Brain” Buttons */}
-          <div className="flex justify-end gap-4 mb-2">
-            <Button
-              onClick={() => setModalOpen(true)}
-              variant="primary"
-              text="Add Content"
-              startIcon={<PlusIcon />}
-            />
-            <Button variant="secondary" text="Share Brain" startIcon={<ShareIcon />} />
-          </div>
-
-          {/* List of Content Cards */}
-          <div className="flex flex-wrap gap-8 justify-center">
-            {contentList.map((item) => (
-              <div key={item._id} className="relative">
-                <Card
-                  title={item.title}
-                  link={item.link}
-                  type={item.type}
-                  onDelete={() => handleDelete(item._id)}
-                />
-              </div>
-            ))}
-          </div>
+          <Button variant="secondary" text="Share Brain" startIcon={<ShareIcon />} />
         </div>
-      </div>
+
+        {/* Loading or Error State (if any) */}
+        {loading && <p className="text-center text-gray-600">Loading your content…</p>}
+        {error && <p className="text-center text-red-600">{error}</p>}
+
+        {/* Content Grid */}
+        <ContentGrid items={contentList} onDelete={deleteContent} />
+      </Layout>
     </>
   );
 }
