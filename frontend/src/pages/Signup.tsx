@@ -16,11 +16,9 @@ export function Signup() {
     const password = passwordRef.current?.value;
 
     await axios.post(`${BACKEND_URL}/api/v1/signup`, {
-      data: {
         username,
         email, 
         password
-      }
     })
     alert("You have signed up!");
   }
@@ -36,7 +34,7 @@ export function Signup() {
           <Input ref={usernameRef} placeholder="Username" />
           <Input ref={emailRef} placeholder="Email" type="email" />
           <Input ref={passwordRef} placeholder="Password" type="password" />
-          <Button onClick={signup} variant="primary" text="Sign Up" fullWidth={true} loading={true} />
+          <Button onClick={signup} variant="primary" text="Sign Up" fullWidth={true} loading={false} />
         </div>
 
         <p className="text-sm text-gray-600 text-center mt-4">

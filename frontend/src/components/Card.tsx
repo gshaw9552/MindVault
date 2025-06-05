@@ -6,10 +6,11 @@ import { ShareIcon } from "../icons/ShareIcon";
 interface CardProps {
   title: string;
   link: string;
-  type: "youtube" | "twitter";
+  type: string;
+  onDelete? : () => void
 }
 
-export function Card({ title, link, type }: CardProps) {
+export function Card({ title, link, type, onDelete}: CardProps) {
   return (
     <div>
       <div className="p-8 bg-white rounded-md border-gray-200 border max-w-96 min-h-48 min-w-72">
@@ -26,7 +27,11 @@ export function Card({ title, link, type }: CardProps) {
                 <ShareIcon />
               </a>
             </div>
-            <div>
+            <div 
+            className="cursor-pointer hover:text-red-500 transition"
+            onClick={onDelete}
+            title="Delete"
+            >
               <DeleteIcon />
             </div>
           </div>

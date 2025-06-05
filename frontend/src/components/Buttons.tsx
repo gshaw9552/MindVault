@@ -1,32 +1,53 @@
 import { ReactElement } from "react";
 
 interface ButtonProps {
-    variant: "primary" | "secondary";
-    text: string;
-    startIcon?: ReactElement;
-    endIcon?: ReactElement;
-    onClick?: () => void;
-    fullWidth?: boolean;
-    loading?: boolean;
+  variant: "primary" | "secondary" | "danger" | "outline";
+  text: string;
+  startIcon?: ReactElement;
+  endIcon?: ReactElement;
+  onClick?: () => void;
+  fullWidth?: boolean;
+  loading?: boolean;
 }
 
-const variantClasses = {
-    "primary" : "bg-purple-600 text-white",
-    "secondary" : "bg-purple-200 text-purple-600"
-}
+const variantClasses: Record<ButtonProps["variant"], string> = {
+  primary: "bg-purple-600 text-white hover:bg-purple-700",
+  secondary: "bg-purple-200 text-purple-600 hover:bg-purple-300",
+  danger: "bg-red-500 text-white hover:bg-red-600",
+  outline: "border border-gray-300 text-gray-700 hover:bg-gray-100",
+};
 
 const defaultStyles = "px-4 py-2 rounded-md font-light flex items-center";
 
 export function Button(props: ButtonProps) {
-    return <button onClick={props.onClick} className={variantClasses[props.variant] 
-    + " " + defaultStyles + " " + `${props.fullWidth ? "w-full justify-center" : "" } 
-    ${props.loading ? " opacity-45" : ""}` } 
-    disabled={props.loading} >
-        <div className="pr-2">
-            {props.startIcon}
-        </div>
-        <div className="center">
-            {props.text}
-        </div>
+  const {
+    variant,
+    text,
+    startIcon,
+    endIcon,
+    onClick,
+    fullWidth,
+    loading,
+  } = props;
+
+  const classes = [
+    variantClasses[variant],
+    defaultStyles,
+    fullWidth ? "w-full justify-center" : "",
+    loading ? "opacity-50 cursor-not-allowed" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return (
+    <button
+      onClick={onClick}
+      className={classes}
+      disabled={loading}
+    >
+      {startIcon && <span className="mr-2">{startIcon}</span>}
+      <span className="flex-grow text-center">{text}</span>
+      {endIcon && <span className="ml-2">{endIcon}</span>}
     </button>
+  );
 }
