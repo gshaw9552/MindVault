@@ -1,5 +1,5 @@
 import { Logo } from "../icons/Logo";
-import { MenuIcon } from "../icons/menuIcon";
+import { MenuIcon } from "../icons/MenuIcon";
 import { TwitterIcon } from "../icons/TwitterIcon";
 import { YoutubeIcon } from "../icons/YoutubeIcon";
 import { SidebarItem } from "./SidebarItems";

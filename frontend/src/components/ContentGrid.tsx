@@ -8,7 +8,7 @@ interface ContentGridProps {
 
 export function ContentGrid({ items, onDelete }: ContentGridProps) {
   return (
-    <div className="flex flex-wrap gap-8 justify-center">
+    <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 px-4 py-6">
       {items.map((item) => (
         <div key={item._id} className="relative">
           <Card

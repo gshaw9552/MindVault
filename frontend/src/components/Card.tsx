@@ -1,45 +1,62 @@
+import { useEffect } from "react";
 import { DeleteIcon } from "../icons/DeleteIcon";
 import { DocumentIcon } from "../icons/DocumentIcon";
 import { ShareIcon } from "../icons/ShareIcon";
-// import TweetEmbed from "react-tweet-embed";
 
 interface CardProps {
   title: string;
   link: string;
   type: string;
-  onDelete? : () => void
+  onDelete?: () => void;
 }
 
-export function Card({ title, link, type, onDelete}: CardProps) {
+export function Card({ title, link, type, onDelete }: CardProps) {
+  // Dynamically load Twitter script for tweet embedding
+  useEffect(() => {
+    if (type === "twitter") {
+      const script = document.createElement("script");
+      script.setAttribute("src", "https://platform.twitter.com/widgets.js");
+      script.setAttribute("async", "true");
+      document.body.appendChild(script);
+      return () => {
+        document.body.removeChild(script);
+      };
+    }
+  }, [type, link]);
+
   return (
-    <div>
-      <div className="p-8 bg-white rounded-md border-gray-200 border max-w-96 min-h-48 min-w-72">
-        <div className="flex justify-between">
-          <div className="flex items-center">
-            <div className="text-gray-500 pr-2">
-              <DocumentIcon />
-            </div>
-            {title}
+    <div className="w-full flex flex-col bg-white border border-gray-200 rounded-xl shadow-sm p-4 space-y-4">
+
+      {/* Header */}
+      <div className="flex justify-between items-start">
+        <div className="flex items-center">
+          <div className="text-gray-500 mr-2">
+            <DocumentIcon />
           </div>
-          <div className="text-gray-500 flex items-center">
-            <div className="pr-2">
-              <a href={link} target="_blank">
-                <ShareIcon />
-              </a>
-            </div>
-            <div 
+          <h2 className="text-lg font-semibold truncate">
+            {title || "Untitled"}
+          </h2>
+        </div>
+        <div className="flex items-center text-gray-500 space-x-2">
+          <a href={link} target="_blank" rel="noopener noreferrer" title="Open">
+            <ShareIcon />
+          </a>
+          <div
             className="cursor-pointer hover:text-red-500 transition"
             onClick={onDelete}
             title="Delete"
-            >
-              <DeleteIcon />
-            </div>
+          >
+            <DeleteIcon />
           </div>
         </div>
-        <div className="pt-4">
-          {type === "youtube" && (
+      </div>
+
+      {/* Content */}
+      <div>
+        {type === "youtube" && (
+          <div className="aspect-video w-full">
             <iframe
-              className="w-full"
+              className="w-full h-full"
               src={`https://www.youtube.com/embed/${new URL(link).searchParams.get("v")}`}
               title="YouTube video player"
               frameBorder="0"
@@ -47,12 +64,13 @@ export function Card({ title, link, type, onDelete}: CardProps) {
               referrerPolicy="strict-origin-when-cross-origin"
               allowFullScreen
             ></iframe>
-          )}
-          {type === "twitter" && <blockquote className="twitter-tweet">
-            <a href={link.replace("x.com", "twitter.com")}></a>
-          </blockquote>}
-          {/* <TweetEmbed id= "1866815354153861341" /> */}
-        </div>
+          </div>
+        )}
+        {type === "twitter" && (
+          <blockquote className="twitter-tweet">
+            <a href={link.replace("x.com", "twitter.com")}>{link}</a>
+          </blockquote>
+        )}
       </div>
     </div>
   );
