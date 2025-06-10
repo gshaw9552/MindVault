@@ -1,7 +1,11 @@
+// frontend/src/components/Sidebar.tsx
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Logo } from "../icons/Logo";
 import { MenuIcon } from "../icons/MenuIcon";
 import { TwitterIcon } from "../icons/TwitterIcon";
 import { YoutubeIcon } from "../icons/YoutubeIcon";
+import { Button } from "./Buttons";
 import { SidebarItem } from "./SidebarItems";
 
 interface SidebarProps {
@@ -10,9 +14,16 @@ interface SidebarProps {
 }
 
 export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
+  const navigate = useNavigate();
+
+  const handleSignOut = () => {
+    localStorage.removeItem("token");
+    navigate("/signin", { replace: true });
+  };
+
   return (
     <div
-      className={`h-screen fixed top-0 left-0 z-50 overflow-hidden bg-white border-r transition-[width] duration-300 ${
+      className={`flex flex-col h-screen fixed top-0 left-0 z-50 overflow-hidden bg-white border-r transition-[width] duration-300 ${
         sidebarOpen ? "w-72" : "w-12 bg-gray-100 border-r-0"
       }`}
     >
@@ -20,7 +31,7 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
       <div className="pt-6 px-2 flex justify-between items-center">
         {sidebarOpen ? (
           <>
-            <div className="flex items-center text-2xl transition-opacity duration-300 opacity-100">
+            <div className="flex items-center text-2xl opacity-100">
               <div className="pr-2 text-purple-800">
                 <Logo />
               </div>
@@ -56,6 +67,19 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
         <SidebarItem title="Tweets" icon={<TwitterIcon />} />
         <SidebarItem title="YouTube" icon={<YoutubeIcon />} />
       </div>
+
+      <div className="flex-grow" />
+
+      {sidebarOpen && (
+        <div className="p-4 mb-4">
+          <Button
+            onClick={handleSignOut}
+            variant="primary"
+            text="Sign Out"
+            fullWidth
+          />
+        </div>
+      )}
     </div>
   );
 }
