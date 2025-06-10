@@ -1,5 +1,3 @@
-// frontend/src/components/Sidebar.tsx
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Logo } from "../icons/Logo";
 import { MenuIcon } from "../icons/MenuIcon";
