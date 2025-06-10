@@ -15,6 +15,7 @@ export function ContentGrid({ items, onDelete }: ContentGridProps) {
             title={item.title}
             link={item.link}
             type={item.type}
+            createdAt={item.createdAt}
             onDelete={() => onDelete(item._id)}
           />
         </div>

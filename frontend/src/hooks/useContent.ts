@@ -6,6 +6,7 @@ export interface ContentItem {
   title: string;
   link: string;
   type: string;
+  createdAt: string;
 }
 
 export function useContent() {
@@ -48,39 +49,46 @@ export function useContent() {
   }, []);
 
   // Create a new content item
-  async function createContent(data: {
-    title: string;
-    link: string;
-    type: string;
-  }): Promise<ContentItem | null> {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("You must be signed in to add content.");
-      return null;
+  // frontend/src/hooks/useContent.ts
+async function createContent(data: {
+  title: string;
+  link: string;
+  type: string;
+}): Promise<ContentItem | null> {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("You must be signed in to add content.");
+    return null;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/content`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const errData = await res.json();
+      throw new Error(errData.message || "Create content failed");
     }
 
-    try {
-      const res = await fetch(`${API_BASE}/content`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(data),
-      });
-      if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.message || "Create content failed");
-      }
-      const createdItem = await res.json();
-      setContentList((prev) => [...prev, createdItem]);
-      return createdItem;
-    } catch (err: any) {
-      console.error("useContent create error:", err);
-      alert("Failed to add content: " + err.message);
-      return null;
-    }
+    // Extract the `content` field from the response
+    const body = await res.json() as { content: ContentItem; message: string };
+    const createdItem = body.content;
+
+    // Append the actual content document
+    setContentList((prev) => [...prev, createdItem]);
+    return createdItem;
+  } catch (err: any) {
+    console.error("useContent create error:", err);
+    alert("Failed to add content: " + err.message);
+    return null;
   }
+}
+
 
   // Delete an existing content item
   async function deleteContent(contentId: string): Promise<boolean> {

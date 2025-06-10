@@ -7,10 +7,11 @@ interface CardProps {
   title: string;
   link: string;
   type: string;
+  createdAt?: string; 
   onDelete?: () => void;
 }
 
-export function Card({ title, link, type, onDelete }: CardProps) {
+export function Card({ title, link, type, createdAt, onDelete }: CardProps) {
   // Dynamically load Twitter script for tweet embedding
   useEffect(() => {
     if (type === "twitter") {
@@ -72,6 +73,15 @@ export function Card({ title, link, type, onDelete }: CardProps) {
           </blockquote>
         )}
       </div>
+      {createdAt && (
+        <p className="text-sm text-gray-400 pt-2 text-left font-serif">
+          Added on {new Date(createdAt).toLocaleDateString("en-IN", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+          })}
+        </p>
+)}
     </div>
   );
 }

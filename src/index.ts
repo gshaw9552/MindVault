@@ -93,7 +93,7 @@ app.post("/api/v1/content", userMiddleware, async (req, res) => {
       return;
     }
 
-    await ContentModel.create({
+    const content = await ContentModel.create({
       link,
       type,
       title,
@@ -102,6 +102,7 @@ app.post("/api/v1/content", userMiddleware, async (req, res) => {
     });
 
     res.status(201).json({
+      content,
       message: "Content added",
     });
   } catch (error) {
