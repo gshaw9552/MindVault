@@ -1,14 +1,17 @@
+// components/Sidebar.tsx
 import { useNavigate } from "react-router-dom";
 import { Logo } from "../icons/Logo";
 import { MenuIcon } from "../icons/MenuIcon";
 import { TwitterIcon } from "../icons/TwitterIcon";
 import { YoutubeIcon } from "../icons/YoutubeIcon";
-import { Button } from "./Buttons";
-import { SidebarItem } from "./SidebarItems";
 import { InstagramIcon } from "../icons/InstagramIcon";
 import { NoteIcon } from "../icons/NoteIcon";
 import { MusicIcon } from "../icons/MusicIcon";
 import { LinkIcon } from "../icons/LinkIcon";
+import { Button } from "./Buttons";
+import { SidebarItem } from "./SidebarItems";
+import { getCardTypeConfig } from "../config/cardConfig";
+import { CardType } from "../types/cardTypes";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -21,6 +24,12 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
   const handleSignOut = () => {
     localStorage.removeItem("token");
     navigate("/signin", { replace: true });
+  };
+
+  // Helper function to get icon color for each content type
+  // This uses the same color logic as the Card component for consistency
+  const getIconColor = (type: CardType): string => {
+    return getCardTypeConfig(type).color;
   };
 
   return (
@@ -66,13 +75,31 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
             : "opacity-0 pl-0 max-h-0 pointer-events-none"
         }`}
       >
-        <SidebarItem title="Tweets" icon={<TwitterIcon />} />
-        <SidebarItem title="YouTube" icon={<YoutubeIcon />} />
-        <SidebarItem title="Instagram" icon={<InstagramIcon />} />
-        <SidebarItem title="Music" icon={<MusicIcon />} />
-        <SidebarItem title="Notes" icon={<NoteIcon />} />
-        <SidebarItem title="Links" icon={<LinkIcon />} />
-
+        {/* Each SidebarItem now uses the same color as its corresponding Card */}
+        <SidebarItem 
+          title="Tweets" 
+          icon={<div className={getIconColor("twitter")}><TwitterIcon /></div>} 
+        />
+        <SidebarItem 
+          title="YouTube" 
+          icon={<div className={getIconColor("youtube")}><YoutubeIcon /></div>} 
+        />
+        <SidebarItem 
+          title="Instagram" 
+          icon={<div className={getIconColor("instagram")}><InstagramIcon /></div>} 
+        />
+        <SidebarItem 
+          title="Music" 
+          icon={<div className={getIconColor("music")}><MusicIcon /></div>} 
+        />
+        <SidebarItem 
+          title="Notes" 
+          icon={<div className={getIconColor("note")}><NoteIcon /></div>} 
+        />
+        <SidebarItem 
+          title="Links" 
+          icon={<div className={getIconColor("link")}><LinkIcon /></div>} 
+        />
       </div>
 
       <div className="flex-grow" />

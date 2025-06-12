@@ -3,7 +3,7 @@ import { useRef } from "react";
 import { Button } from "../components/Buttons";
 import { Input } from "../components/Input";
 import { useNavigate } from "react-router-dom";
-import { BACKEND_URL } from "../config";
+import { BACKEND_URL } from "../config/config";
 
 export function Signin() {
   const identifierRef = useRef<HTMLInputElement>(null);

@@ -3,7 +3,7 @@ import axios from "axios";
 import { useRef } from "react";
 import { Button } from "../components/Buttons";
 import { Input } from "../components/Input";
-import { BACKEND_URL } from "../config";
+import { BACKEND_URL } from "../config/config";
 
 export function Signup() {
   const usernameRef = useRef<HTMLInputElement>(null);
