@@ -53,15 +53,17 @@ export const CardContent: React.FC<CardContentProps> = ({ type, link, descriptio
     const IconComponent = config.icon;
     
     return (
-      <div className="flex items-center justify-center h-48 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-        <div className="text-center">
-          <div className={`w-12 h-12 mx-auto mb-3 ${config.color}`}>
-            <IconComponent />
-          </div>
-          <p className="text-sm font-medium text-gray-600">{config.label}</p>
-          <p className="text-xs text-gray-400 mt-1">Click to open</p>
-        </div>
-      </div>
+        <a href={link} target="_blank">
+            <div className="flex items-center justify-center h-48 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                <div className="text-center">
+                <div className={`w-12 h-12 mx-auto mb-3 ${config.color}`}>
+                    <IconComponent />
+                </div>
+                <p className="text-sm font-medium text-gray-600">{config.label}</p>
+                <p className="text-xs text-gray-400 mt-1"> Click to open </p>
+                </div>
+            </div>
+        </a>
     );
   };
 

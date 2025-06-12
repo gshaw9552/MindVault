@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 import { DeleteIcon } from "../icons/DeleteIcon";
-import { ShareIcon } from "../icons/ShareIcon";
 import { CardProps } from "../types/cardTypes";
 import { getCardTypeConfig } from "../config/cardConfig";
 import { loadTwitterScript, loadInstagramScript } from "../utils/embedUtils";
 import { formatCardDate } from "../utils/dateUtils";
 import { CardContent } from "./CardContent";
+import { UploadIcon } from "../icons/UploadIcon";
 
 export function Card({
   title,
@@ -61,7 +61,7 @@ export function Card({
             className="flex-shrink-0 p-1 rounded-md hover:bg-gray-100 hover:text-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-300"
           >
             <div className="w-4 h-4 flex items-center justify-center">
-              <ShareIcon />
+              <UploadIcon />
             </div>
           </a>
           <button
