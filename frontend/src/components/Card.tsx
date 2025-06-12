@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { DeleteIcon } from "../icons/DeleteIcon";
 import { DocumentIcon } from "../icons/DocumentIcon";
 import { ShareIcon } from "../icons/ShareIcon";
+import { normalizeYouTubeUrl } from "../utils";
 
 interface CardProps {
   title: string;
@@ -20,7 +21,7 @@ export function Card({
   createdAt,
   onDelete,
 }: CardProps) {
-
+  // Dynamically load Twitter script for tweet embedding
   useEffect(() => {
     if (type === "twitter") {
       const script = document.createElement("script");
@@ -33,6 +34,15 @@ export function Card({
     }
   }, [type, link]);
 
+  // Helper to get YouTube embed URL, handling /shorts/ and youtu.be links
+  const getEmbedUrl = (rawLink: string) => {
+    const watchUrl = normalizeYouTubeUrl(rawLink);
+    const videoId = new URL(watchUrl).searchParams.get("v");
+    return videoId
+      ? `https://www.youtube.com/embed/${videoId}`
+      : null;
+  };
+
   return (
     <div
       className="
@@ -42,31 +52,25 @@ export function Card({
         min-h-0
       "
     >
-      {/* Header - Improved responsive layout */}
+      {/* Header */}
       <div className="flex justify-between items-start gap-3 mb-4">
-        {/* Left side - Icon and Title with proper constraints */}
         <div className="flex items-start min-w-0 flex-1">
-          {/* Icon container with fixed dimensions */}
           <div className="text-gray-500 mr-2 flex-shrink-0 w-5 h-5 mt-0.5">
             <DocumentIcon />
           </div>
-          {/* Title with proper text handling */}
-          <h2 
-            className="text-lg font-semibold text-gray-900 leading-tight break-words hyphens-auto" 
+          <h2
+            className="text-lg font-semibold text-gray-900 leading-tight break-words hyphens-auto"
             title={title}
-            style={{ 
-              wordBreak: 'break-word',
-              overflowWrap: 'break-word',
-              lineHeight: '1.4'
+            style={{
+              wordBreak: "break-word",
+              overflowWrap: "break-word",
+              lineHeight: "1.4",
             }}
           >
             {title || "Untitled"}
           </h2>
         </div>
-
-        {/* Right side - Action buttons with fixed positioning */}
         <div className="flex items-center text-gray-500 gap-1 flex-shrink-0">
-          {/* Share button with consistent sizing */}
           <a
             href={link}
             target="_blank"
@@ -83,8 +87,6 @@ export function Card({
               <ShareIcon />
             </div>
           </a>
-          
-          {/* Delete button with consistent sizing */}
           <button
             onClick={onDelete}
             title="Delete"
@@ -102,24 +104,29 @@ export function Card({
         </div>
       </div>
 
-      {/* Content area with proper overflow handling */}
+      {/* Content */}
       <div className="flex-1 space-y-4 min-h-0 overflow-hidden">
-        {/* YouTube embed with responsive aspect ratio */}
         {type === "youtube" && (
-          <div className="aspect-video w-full rounded-lg overflow-hidden bg-gray-100">
-            <iframe
-              className="w-full h-full"
-              src={`https://www.youtube.com/embed/${new URL(link).searchParams.get("v")}`}
-              title="YouTube video player"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
-            />
-          </div>
+          (() => {
+            const embedUrl = getEmbedUrl(link);
+            return embedUrl ? (
+              <div className="aspect-video w-full rounded-lg overflow-hidden bg-gray-100">
+                <iframe
+                  className="w-full h-full"
+                  src={embedUrl}
+                  title="YouTube video player"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                />
+              </div>
+            ) : (
+              <p className="text-red-500">Invalid YouTube URL</p>
+            );
+          })()
         )}
 
-        {/* Twitter embed with container constraints */}
         {type === "twitter" && (
           <div className="w-full overflow-hidden">
             <blockquote className="twitter-tweet">
@@ -128,41 +135,42 @@ export function Card({
           </div>
         )}
 
-        {/* Description with conditional display based on type */}
         {description && (
           <div className="mt-2">
-            {/* For Note type - show full description with scroll */}
             {type === "note" ? (
               <div className="
                 max-h-64 overflow-y-auto
                 bg-gray-50 rounded-lg p-3
                 border border-gray-200
               ">
-                <p className="
-                  text-sm text-gray-700 leading-relaxed
-                  break-words hyphens-auto whitespace-pre-wrap
-                "
-                style={{
-                  wordBreak: 'break-word',
-                  overflowWrap: 'break-word'
-                }}>
+                <p
+                  className="
+                    text-sm text-gray-700 leading-relaxed
+                    break-words hyphens-auto whitespace-pre-wrap
+                  "
+                  style={{
+                    wordBreak: "break-word",
+                    overflowWrap: "break-word",
+                  }}
+                >
                   {description}
                 </p>
               </div>
             ) : (
-              /* For other types - show limited description with line clamp */
-              <p className="
-                text-sm text-gray-600 leading-relaxed
-                break-words hyphens-auto
-                overflow-hidden
-              "
-              style={{
-                display: '-webkit-box',
-                WebkitLineClamp: 3,
-                WebkitBoxOrient: 'vertical',
-                wordBreak: 'break-word',
-                overflowWrap: 'break-word'
-              }}>
+              <p
+                className="
+                  text-sm text-gray-600 leading-relaxed
+                  break-words hyphens-auto
+                  overflow-hidden
+                "
+                style={{
+                  display: "-webkit-box",
+                  WebkitLineClamp: 3,
+                  WebkitBoxOrient: "vertical",
+                  wordBreak: "break-word",
+                  overflowWrap: "break-word",
+                }}
+              >
                 {description}
               </p>
             )}
@@ -170,7 +178,7 @@ export function Card({
         )}
       </div>
 
-      {/* Footer with date - positioned at bottom */}
+      {/* Footer */}
       {createdAt && (
         <div className="mt-4 pt-3 border-t border-gray-100">
           <p className="text-xs text-gray-400 text-left">
