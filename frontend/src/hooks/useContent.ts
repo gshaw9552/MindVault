@@ -6,7 +6,7 @@ export interface ContentItem {
   title: string;
   link: string;
   description?: string;
-  type: string;
+  type: "youtube" | "twitter" | "instagram" | "link" | "music";
   createdAt: string;
 }
 

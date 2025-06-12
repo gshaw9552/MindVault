@@ -6,6 +6,9 @@ import { YoutubeIcon } from "../icons/YoutubeIcon";
 import { Button } from "./Buttons";
 import { SidebarItem } from "./SidebarItems";
 import { InstagramIcon } from "../icons/InstagramIcon";
+import { NoteIcon } from "../icons/NoteIcon";
+import { MusicIcon } from "../icons/MusicIcon";
+import { LinkIcon } from "../icons/LinkIcon";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -65,7 +68,11 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
       >
         <SidebarItem title="Tweets" icon={<TwitterIcon />} />
         <SidebarItem title="YouTube" icon={<YoutubeIcon />} />
-        <SidebarItem title="Reels" icon={<InstagramIcon />} />
+        <SidebarItem title="Instagram" icon={<InstagramIcon />} />
+        <SidebarItem title="Music" icon={<MusicIcon />} />
+        <SidebarItem title="Notes" icon={<NoteIcon />} />
+        <SidebarItem title="Links" icon={<LinkIcon />} />
+
       </div>
 
       <div className="flex-grow" />

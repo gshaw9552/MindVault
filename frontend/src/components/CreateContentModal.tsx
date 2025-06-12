@@ -125,6 +125,7 @@ export function CreateContentModal({
               <option value="link">Link</option>
               <option value="music">Music</option>
               <option value="note">Note</option>
+              <option value="instagram">Instagram</option>
             </select>
           </label>
 

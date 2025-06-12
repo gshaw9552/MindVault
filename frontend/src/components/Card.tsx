@@ -32,24 +32,36 @@ export function Card({
         document.body.removeChild(script);
       };
     }
+
+    let script: HTMLScriptElement | null = null;
+
+    if (type === "instagram") {
+      script = document.createElement("script");
+      script.src = "https://www.instagram.com/embed.js";
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    if (type === "instagram" && (window as any).instgrm?.Embeds) {
+    (window as any).instgrm.Embeds.process();
+  }
+
+    return () => {
+      if (script) document.body.removeChild(script);
+    };
   }, [type, link]);
 
-  // Helper to get YouTube embed URL, handling /shorts/ and youtu.be links
   const getEmbedUrl = (rawLink: string) => {
     const watchUrl = normalizeYouTubeUrl(rawLink);
     const videoId = new URL(watchUrl).searchParams.get("v");
-    return videoId
-      ? `https://www.youtube.com/embed/${videoId}`
-      : null;
+    return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
   };
 
   return (
     <div
       className="
-        w-full flex flex-col h-full
+        w-full flex flex-col h-96
         bg-white border border-gray-200 rounded-xl
         shadow-sm p-4
-        min-h-0
       "
     >
       {/* Header */}
@@ -104,15 +116,16 @@ export function Card({
         </div>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 space-y-4 min-h-0 overflow-hidden">
-        {type === "youtube" && (
+      {/* Content - Added scrolling and height constraints to maintain card size */}
+      <div className="flex-1 space-y-4 overflow-y-auto min-h-0">
+        {type === "youtube" &&
           (() => {
             const embedUrl = getEmbedUrl(link);
             return embedUrl ? (
-              <div className="aspect-video w-full rounded-lg overflow-hidden bg-gray-100">
+              // Made YouTube embed smaller and contained within card
+              <div className="relative w-full h-48 bg-gray-100 rounded-lg overflow-hidden">
                 <iframe
-                  className="w-full h-full"
+                  className="absolute top-0 left-0 w-full h-full"
                   src={embedUrl}
                   title="YouTube video player"
                   frameBorder="0"
@@ -124,25 +137,40 @@ export function Card({
             ) : (
               <p className="text-red-500">Invalid YouTube URL</p>
             );
-          })()
-        )}
+          })()}
 
         {type === "twitter" && (
-          <div className="w-full overflow-hidden">
-            <blockquote className="twitter-tweet">
+          // Fixed height container for Twitter embeds to maintain card size
+          <div className="w-full h-48 overflow-hidden">
+            <blockquote className="twitter-tweet" data-theme="light">
               <a href={link.replace("x.com", "twitter.com")}>{link}</a>
             </blockquote>
+          </div>
+        )}
+
+        {type === "instagram" && (
+          // Fixed height container for Instagram embeds to maintain card size
+          <div className="w-full h-48 overflow-hidden">
+            <blockquote
+              className="instagram-media"
+              data-instgrm-permalink={link}
+              data-instgrm-version="14"
+              style={{ margin: "0 auto", maxWidth: "100%" }}
+            ></blockquote>
           </div>
         )}
 
         {description && (
           <div className="mt-2">
             {type === "note" ? (
-              <div className="
-                max-h-64 overflow-y-auto
+              // Notes get more space but still contained within card
+              <div
+                className="
+                max-h-32 overflow-y-auto
                 bg-gray-50 rounded-lg p-3
                 border border-gray-200
-              ">
+              "
+              >
                 <p
                   className="
                     text-sm text-gray-700 leading-relaxed
@@ -157,16 +185,17 @@ export function Card({
                 </p>
               </div>
             ) : (
+              // Other descriptions are clamped to 3 lines to save space
               <p
                 className="
                   text-sm text-gray-600 leading-relaxed
                   break-words hyphens-auto
-                  overflow-hidden
                 "
                 style={{
                   display: "-webkit-box",
-                  WebkitLineClamp: 3,
+                  WebkitLineClamp: 3, // Back to 3 lines to maintain card size
                   WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
                   wordBreak: "break-word",
                   overflowWrap: "break-word",
                 }}
