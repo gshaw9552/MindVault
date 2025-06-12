@@ -6,7 +6,7 @@ import { Input } from "./Input";
 interface CreateContentModalProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: { title: string; link: string; type: string }) => void;
+  onSubmit: (data: { title: string; link: string; type: string; description?: string }) => void;
 }
 
 export function CreateContentModal({
@@ -17,6 +17,7 @@ export function CreateContentModal({
   const titleRef = useRef<HTMLInputElement>(null);
   const linkRef = useRef<HTMLInputElement>(null);
   const typeRef = useRef<HTMLSelectElement>(null);
+  const descRef = useRef<HTMLTextAreaElement>(null);
 
   if (!open) return null;
 
@@ -35,18 +36,21 @@ export function CreateContentModal({
     const title = titleRef.current?.value.trim() || "";
     const link = linkRef.current?.value.trim() || "";
     const type = typeRef.current?.value.trim() || "";
+    const raw = descRef.current?.value.trim();
+    const description = raw && raw.length > 0 ? raw : undefined;
 
     if (!title || !link || !type) {
       alert("All fields are required.");
       return;
     }
 
-    onSubmit({ title, link, type });
+    onSubmit({ title, link, type, description });
 
     // Clear for next time
     if (titleRef.current) titleRef.current.value = "";
     if (linkRef.current) linkRef.current.value = "";
     if (typeRef.current) typeRef.current.value = "";
+    if (descRef.current) descRef.current.value = "";
 
     onClose();
   };
@@ -91,6 +95,14 @@ export function CreateContentModal({
 
             </select>
           </label>
+
+          <label className="block">
+          <span className="text-sm font-medium">Description (optional)</span>
+          <textarea
+            ref={descRef}
+            placeholder="Write a short note…"
+            className="w-full mt-1 p-2 border rounded h-24 resize-y focus:outline-none focus:ring-2 focus:ring-purple-400" />
+        </label>
 
           <Button type="submit" variant="primary" text="Submit" fullWidth />
         </form>

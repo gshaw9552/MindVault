@@ -84,7 +84,7 @@ app.post("/api/v1/signin", async (req, res) => {
 
 app.post("/api/v1/content", userMiddleware, async (req, res) => {
   try {
-    const { link, type, title } = req.body;
+    const { link, type, title, description } = req.body;
 
     if (!link || !type || !title) {
       res.status(400).json({
@@ -98,6 +98,7 @@ app.post("/api/v1/content", userMiddleware, async (req, res) => {
       type,
       title,
       userId: req.userId,
+      description,
       tags: [],
     });
 
@@ -133,6 +134,7 @@ app.delete("/api/v1/content", userMiddleware, async (req, res) => {
       _id: contentId,
       userId: req.userId,
     });
+    
 
     res.json({ message: "Content deleted" });
   } catch (err) {

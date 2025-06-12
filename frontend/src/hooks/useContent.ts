@@ -5,6 +5,7 @@ export interface ContentItem {
   _id: string;
   title: string;
   link: string;
+  description?: string;
   type: string;
   createdAt: string;
 }
@@ -54,6 +55,7 @@ async function createContent(data: {
   title: string;
   link: string;
   type: string;
+  description?: string;
 }): Promise<ContentItem | null> {
   const token = localStorage.getItem("token");
   if (!token) {
