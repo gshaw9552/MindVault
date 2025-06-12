@@ -128,23 +128,44 @@ export function Card({
           </div>
         )}
 
-        {/* Description with proper text wrapping and constraints */}
+        {/* Description with conditional display based on type */}
         {description && (
           <div className="mt-2">
-            <p className="
-              text-sm text-gray-600 leading-relaxed
-              break-words hyphens-auto
-              overflow-hidden
-            "
-            style={{
-              display: '-webkit-box',
-              WebkitLineClamp: 3,
-              WebkitBoxOrient: 'vertical',
-              wordBreak: 'break-word',
-              overflowWrap: 'break-word'
-            }}>
-              {description}
-            </p>
+            {/* For Note type - show full description with scroll */}
+            {type === "note" ? (
+              <div className="
+                max-h-64 overflow-y-auto
+                bg-gray-50 rounded-lg p-3
+                border border-gray-200
+              ">
+                <p className="
+                  text-sm text-gray-700 leading-relaxed
+                  break-words hyphens-auto whitespace-pre-wrap
+                "
+                style={{
+                  wordBreak: 'break-word',
+                  overflowWrap: 'break-word'
+                }}>
+                  {description}
+                </p>
+              </div>
+            ) : (
+              /* For other types - show limited description with line clamp */
+              <p className="
+                text-sm text-gray-600 leading-relaxed
+                break-words hyphens-auto
+                overflow-hidden
+              "
+              style={{
+                display: '-webkit-box',
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: 'vertical',
+                wordBreak: 'break-word',
+                overflowWrap: 'break-word'
+              }}>
+                {description}
+              </p>
+            )}
           </div>
         )}
       </div>

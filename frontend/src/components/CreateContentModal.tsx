@@ -39,12 +39,30 @@ export function CreateContentModal({
     const raw = descRef.current?.value.trim();
     const description = raw && raw.length > 0 ? raw : undefined;
 
-    if (!title || !link || !type) {
-      alert("All fields are required.");
+    // Modified validation - Note type doesn't require a link
+    if (!title || !type) {
+      alert("Title and Type are required.");
       return;
     }
 
-    onSubmit({ title, link, type, description });
+    // For non-note types, link is required
+    if (type !== "note" && !link) {
+      alert("Link is required for this content type.");
+      return;
+    }
+
+    // For note type, description is required
+    if (type === "note" && !description) {
+      alert("Description is required for Note type.");
+      return;
+    }
+
+    onSubmit({ 
+      title, 
+      link: type === "note" ? "#" : link, // Use placeholder link for notes
+      type, 
+      description 
+    });
 
     // Clear for next time
     if (titleRef.current) titleRef.current.value = "";
@@ -53,6 +71,15 @@ export function CreateContentModal({
     if (descRef.current) descRef.current.value = "";
 
     onClose();
+  };
+
+  // Get current selected type to show/hide link field
+  const handleTypeChange = () => {
+    // This will trigger a re-render when type changes
+    const selectedType = typeRef.current?.value;
+    if (selectedType === "note" && linkRef.current) {
+      linkRef.current.value = "";
+    }
   };
 
   return (
@@ -77,12 +104,17 @@ export function CreateContentModal({
 
         <form onSubmit={handleFormSubmit} className="flex flex-col gap-4">
           <Input inputRef={titleRef} placeholder="Title" />
-          <Input inputRef={linkRef} placeholder="Link (URL)" />
+          
+          {/* Conditional Link field - hidden for Note type */}
+          <div id="link-field">
+            <Input inputRef={linkRef} placeholder="Link (URL)" />
+          </div>
 
           <label className="block w-full">
             <select
               ref={typeRef}
               defaultValue=""
+              onChange={handleTypeChange}
               className="px-4 py-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-purple-400"
             >
               <option value="" disabled>
@@ -92,17 +124,23 @@ export function CreateContentModal({
               <option value="twitter">Twitter</option>
               <option value="link">Link</option>
               <option value="music">Music</option>
-
+              <option value="note">Note</option>
             </select>
           </label>
 
           <label className="block">
-          <span className="text-sm font-medium">Description (optional)</span>
-          <textarea
-            ref={descRef}
-            placeholder="Write a short note…"
-            className="w-full mt-1 p-2 border rounded h-24 resize-y focus:outline-none focus:ring-2 focus:ring-purple-400" />
-        </label>
+            <span className="text-sm font-medium">
+              Description 
+              {/* Show required indicator for Note type */}
+              <span id="desc-required" className="text-red-500 hidden"> *</span>
+              <span id="desc-optional" className="text-gray-500"> (optional)</span>
+            </span>
+            <textarea
+              ref={descRef}
+              placeholder="Write a short note…"
+              className="w-full mt-1 p-2 border rounded h-24 resize-y focus:outline-none focus:ring-2 focus:ring-purple-400" 
+            />
+          </label>
 
           <Button type="submit" variant="primary" text="Submit" fullWidth />
         </form>
