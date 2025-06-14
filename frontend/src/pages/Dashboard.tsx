@@ -1,4 +1,3 @@
-// frontend/src/pages/Dashboard.tsx
 import { useState } from "react";
 import { Button } from "../components/Buttons";
 import { CreateContentModal } from "../components/CreateContentModal";

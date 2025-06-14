@@ -1,4 +1,3 @@
-// components/Sidebar.tsx
 import { useNavigate } from "react-router-dom";
 import { Logo } from "../icons/Logo";
 import { MenuIcon } from "../icons/MenuIcon";
@@ -27,7 +26,6 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
   };
 
   // Helper function to get icon color for each content type
-  // This uses the same color logic as the Card component for consistency
   const getIconColor = (type: CardType): string => {
     return getCardTypeConfig(type).color;
   };
@@ -75,7 +73,6 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
             : "opacity-0 pl-0 max-h-0 pointer-events-none"
         }`}
       >
-        {/* Each SidebarItem now uses the same color as its corresponding Card */}
         <SidebarItem 
           title="Tweets" 
           icon={<div className={getIconColor("twitter")}><TwitterIcon /></div>} 
