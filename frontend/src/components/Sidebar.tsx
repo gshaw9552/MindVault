@@ -15,9 +15,11 @@ import { CardType } from "../types/cardTypes";
 interface SidebarProps {
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
+  onFilterChange: (type: string) => void;
+  currentFilter: string;
 }
 
-export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
+export function Sidebar({ sidebarOpen, setSidebarOpen, onFilterChange, currentFilter }: SidebarProps) {
   const navigate = useNavigate();
 
   const handleSignOut = () => {
@@ -29,6 +31,45 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
   const getIconColor = (type: CardType): string => {
     return getCardTypeConfig(type).color;
   };
+
+  // Define sidebar items with their corresponding filter types
+  const sidebarItems = [
+    {
+      title: "All Content",
+      filterType: "all",
+      icon: <div className="text-gray-600">📁</div>
+    },
+    {
+      title: "Tweets",
+      filterType: "twitter",
+      icon: <div className={getIconColor("twitter")}><TwitterIcon /></div>
+    },
+    {
+      title: "YouTube",
+      filterType: "youtube", 
+      icon: <div className={getIconColor("youtube")}><YoutubeIcon /></div>
+    },
+    {
+      title: "Instagram",
+      filterType: "instagram",
+      icon: <div className={getIconColor("instagram")}><InstagramIcon /></div>
+    },
+    {
+      title: "Music",
+      filterType: "music",
+      icon: <div className={getIconColor("music")}><MusicIcon /></div>
+    },
+    {
+      title: "Notes",
+      filterType: "note",
+      icon: <div className={getIconColor("note")}><NoteIcon /></div>
+    },
+    {
+      title: "Links",
+      filterType: "link",
+      icon: <div className={getIconColor("link")}><LinkIcon /></div>
+    }
+  ];
 
   return (
     <div
@@ -73,30 +114,15 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
             : "opacity-0 pl-0 max-h-0 pointer-events-none"
         }`}
       >
-        <SidebarItem 
-          title="Tweets" 
-          icon={<div className={getIconColor("twitter")}><TwitterIcon /></div>} 
-        />
-        <SidebarItem 
-          title="YouTube" 
-          icon={<div className={getIconColor("youtube")}><YoutubeIcon /></div>} 
-        />
-        <SidebarItem 
-          title="Instagram" 
-          icon={<div className={getIconColor("instagram")}><InstagramIcon /></div>} 
-        />
-        <SidebarItem 
-          title="Music" 
-          icon={<div className={getIconColor("music")}><MusicIcon /></div>} 
-        />
-        <SidebarItem 
-          title="Notes" 
-          icon={<div className={getIconColor("note")}><NoteIcon /></div>} 
-        />
-        <SidebarItem 
-          title="Links" 
-          icon={<div className={getIconColor("link")}><LinkIcon /></div>} 
-        />
+        {sidebarItems.map((item) => (
+          <SidebarItem
+            key={item.filterType}
+            title={item.title}
+            icon={item.icon}
+            onClick={() => onFilterChange(item.filterType)}
+            selected={currentFilter === item.filterType}
+          />
+        ))}
       </div>
 
       <div className="flex-grow" />

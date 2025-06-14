@@ -10,13 +10,21 @@ import { useContent } from "../hooks/useContent";
 function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
+  const [filterType, setFilterType] = useState("all");
 
   // Use the custom hook for all content-related operations
   const { contentList, loading, error, createContent, deleteContent } = useContent();
 
+  const visibleItems = filterType === "all" ? contentList : contentList.filter((item) => item.type === filterType);
+
   return (
     <>
-      <Layout sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}>
+      <Layout
+      onFilterChange={setFilterType}
+      currentFilter={filterType}  
+      sidebarOpen={sidebarOpen} 
+      setSidebarOpen={setSidebarOpen}
+      >
         {/* Add Content Modal */}
         <CreateContentModal
           open={modalOpen}
@@ -40,7 +48,7 @@ function Dashboard() {
         {error && <p className="text-center text-red-600">{error}</p>}
 
         {/* Content Grid */}
-        <ContentGrid items={contentList} onDelete={deleteContent} />
+        <ContentGrid items={visibleItems} onDelete={deleteContent} />
       </Layout>
     </>
   );
