@@ -144,80 +144,67 @@ app.delete("/api/v1/content", userMiddleware, async (req, res) => {
 });
 
 app.post("/api/v1/brain/share", userMiddleware, async (req, res) => {
-  const share = req.body.share;
-  if (share) {
-    const existingLink = await LinkModel.findOne({
-      userId: req.userId,
-    });
-
-    if (existingLink) {
-      res.json({
-        hash: existingLink.hash,
-      });
-      return;
-    }
+  let link = await LinkModel.findOne({ userId: req.userId });
+  if (!link) {
     const hash = random(10);
-    await LinkModel.create({
-      userId: req.userId,
-      hash: hash,
-    });
+    link = await LinkModel.create({ userId: req.userId, hash });
+  }
+  const user = await UserModel.findById(req.userId, "username").lean();
+  res.json({ hash: link.hash, username: user!.username });
+});
 
-    res.json({
-      hash,
-    });
-  } else {
-    await LinkModel.deleteOne({
-      userId: req.userId,
-    });
+app.get("/api/v1/public-brains", async (_, res) => {
+  try {
+    const links = await LinkModel.find()
+      .sort({ createdAt: -1 })
+      .populate<{ userId: { username: string } }>("userId", "username")
+      .lean();
 
-    res.json({
-      message: "Removed link",
-    });
+    const brains = links.map(link => ({
+      username: link.userId.username,
+      hash:     link.hash,
+      createdAt: link.createdAt,
+    }));
+
+    res.json({ brains });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
-app.get("/api/v1/brain/:shareLink", async (req, res) => {
-  try {
-    // Log the incoming shareLink parameter for debugging
-    const hash = req.params.shareLink.trim();
-    console.log("Received shareLink hash:", hash);
-
-    const link = await LinkModel.findOne({ hash });
-    if (!link) {
-      console.error("Link not found for hash:", hash);
-      res.status(404).json({
-        message: "Link not found",
-      });
-      return;
-    }
-    
-    // Log the found link document
-    console.log("Found link:", link);
-
-    const content = await ContentModel.find({
-      userId: link.userId,
-    });
-    console.log("Found content for user:", content);
-
-    const user = await UserModel.findOne({
-      _id: link.userId,
-    });
-    if (!user) {
-      console.error("User not found for id:", link.userId);
-      res.status(404).json({
-        message: "User not found",
-      });
-      return;
-    }
-
-    res.json({
-      username: user.username,
-      content: content,
-    });
-  } catch (error) {
-    console.error("Error in /api/v1/brain/:shareLink:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+app.get("/api/v1/brain/me/link", userMiddleware, async (req, res) => {
+  const link = await LinkModel.findOne({ userId: req.userId }).lean();
+  if (!link) {
+    res.status(404).json({ message: "Not shared" });
+    return;
   }
+
+  const user = await UserModel.findById(req.userId, "username").lean();
+  res.json({ hash: link.hash, username: user!.username });
+});
+
+
+app.delete("/api/v1/brain/me/link", userMiddleware, async (req, res) => {
+  await LinkModel.deleteOne({ userId: req.userId });
+  res.json({ message: "Unshared" });
+});
+
+app.get("/api/v1/brain/:shareLink", async (req, res) => {
+  const hash = req.params.shareLink.trim();
+  const link = await LinkModel.findOne({ hash });
+  if (!link) { 
+    res.status(404).json({ message: "Not found" });
+    return;
+  }
+
+  const content = await ContentModel.find({ userId: link.userId }).lean();
+  const user = await UserModel.findById(link.userId, "username").lean();
+
+  res.json({
+    username: user!.username,
+    content,
+  });
 });
 
 app.listen(3000, () => {

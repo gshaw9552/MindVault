@@ -1,9 +1,7 @@
 import { ReactElement } from "react";
 
 interface ButtonProps {
-  /** Now include HTML button types */
   type?: "button" | "submit" | "reset";
-
   variant: "primary" | "secondary" | "danger" | "outline";
   text: string;
   startIcon?: ReactElement;
@@ -11,6 +9,7 @@ interface ButtonProps {
   onClick?: () => void;
   fullWidth?: boolean;
   loading?: boolean;
+  disabled?: boolean;
 }
 
 const variantClasses: Record<ButtonProps["variant"], string> = {
@@ -20,11 +19,11 @@ const variantClasses: Record<ButtonProps["variant"], string> = {
   outline: "border border-gray-300 text-gray-700 hover:bg-gray-100",
 };
 
-const defaultStyles = "px-4 py-2 rounded-md font-light flex items-center";
+const defaultStyles = "font-medium px-4 py-2 rounded-md font-light flex items-center transition-colors duration-200";
 
 export function Button(props: ButtonProps) {
   const {
-    type = "button",   // default type is "button" unless overwritten
+    type = "button",
     variant,
     text,
     startIcon,
@@ -32,13 +31,16 @@ export function Button(props: ButtonProps) {
     onClick,
     fullWidth,
     loading,
+    disabled,
   } = props;
+
+  const isDisabled = loading || disabled;
 
   const classes = [
     variantClasses[variant],
     defaultStyles,
     fullWidth ? "w-full justify-center" : "",
-    loading ? "opacity-50 cursor-not-allowed" : "",
+    isDisabled ? "opacity-50 cursor-not-allowed" : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -48,7 +50,7 @@ export function Button(props: ButtonProps) {
       type={type}
       onClick={onClick}
       className={classes}
-      disabled={loading}
+      disabled={isDisabled}
     >
       {startIcon && <span className="mr-2">{startIcon}</span>}
       <span className="flex-grow text-center">{text}</span>

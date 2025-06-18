@@ -5,7 +5,11 @@ import { getCardTypeConfig } from "../config/cardConfig";
 import { loadTwitterScript, loadInstagramScript } from "../utils/embedUtils";
 import { formatCardDate } from "../utils/dateUtils";
 import { CardContent } from "./CardContent";
-import { UploadIcon } from "../icons/UploadIcon";
+import { RedirectIcon } from "../icons/RedirectIcon";
+
+export interface EnhancedCardProps extends CardProps {
+  showDelete?: boolean;
+}
 
 export function Card({
   title,
@@ -14,7 +18,8 @@ export function Card({
   description,
   createdAt,
   onDelete,
-}: CardProps) {
+  showDelete = true,
+}: EnhancedCardProps) {
   const config = getCardTypeConfig(type);
   const IconComponent = config.icon;
 
@@ -61,18 +66,20 @@ export function Card({
             className="flex-shrink-0 p-1 rounded-md hover:bg-gray-100 hover:text-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-300"
           >
             <div className="w-4 h-4 flex items-center justify-center">
-              <UploadIcon />
+              <RedirectIcon />
             </div>
           </a>
-          <button
-            onClick={onDelete}
-            title="Delete"
-            className="flex-shrink-0 p-1 rounded-md hover:bg-red-50 hover:text-red-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-300"
-          >
-            <div className="w-4 h-4 flex items-center justify-center">
-              <DeleteIcon />
-            </div>
-          </button>
+          {showDelete && onDelete && (
+            <button
+              onClick={onDelete}
+              title="Delete"
+              className="flex-shrink-0 p-1 rounded-md hover:bg-red-50 hover:text-red-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-300"
+            >
+              <div className="w-4 h-4 flex items-center justify-center">
+                <DeleteIcon />
+              </div>
+            </button>
+          )}
         </div>
       </div>
 
