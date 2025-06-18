@@ -6,11 +6,15 @@ import { ShareIcon } from "../icons/ShareIcon";
 import { Layout } from "../components/Layout";
 import { ContentGrid } from "../components/ContentGrid";
 import { useContent } from "../hooks/useContent";
+import { ShareBrainModal } from "../components/ShareBrainModal";
+import { EmptyState } from "../components/EmptyState";
+import { Header } from "../components/Header";
 
 function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [filterType, setFilterType] = useState("all");
+  const [shareModalOpen, setShareModalOpen] = useState(false);
 
   // Use the custom hook for all content-related operations
   const { contentList, loading, error, createContent, deleteContent } = useContent();
@@ -32,6 +36,12 @@ function Dashboard() {
           onSubmit={createContent}
         />
 
+        {/* Share Brain Modal */}
+        <ShareBrainModal 
+          open={shareModalOpen}
+          onClose={() => setShareModalOpen(false)}
+        />
+
         {/* Buttons */}
         <div className="flex justify-end gap-4 mb-2">
           <Button
@@ -40,7 +50,11 @@ function Dashboard() {
             text="Add Content"
             startIcon={<PlusIcon />}
           />
-          <Button variant="secondary" text="Share Brain" startIcon={<ShareIcon />} />
+          <Button 
+          onClick={() => setShareModalOpen(true)}
+          variant="secondary" 
+          text="Share Brain" 
+          startIcon={<ShareIcon />} />
         </div>
 
         {/* Loading or Error State (if any) */}
@@ -48,7 +62,7 @@ function Dashboard() {
         {error && <p className="text-center text-red-600">{error}</p>}
 
         {/* Content Grid */}
-        <ContentGrid items={visibleItems} onDelete={deleteContent} />
+        {visibleItems && visibleItems.length > 0 ? (<ContentGrid items={visibleItems} onDelete={deleteContent} />) : (<EmptyState title="No Content to Display"  description="use the Add Content Button to add your personlized content " />)}
       </Layout>
     </>
   );

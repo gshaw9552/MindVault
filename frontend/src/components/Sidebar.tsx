@@ -85,7 +85,7 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, onFilterChange, currentFi
               <div className="pr-2 text-purple-800">
                 <Logo />
               </div>
-              <span>NeuraLink</span>
+              <a href="/"><span>MindVault</span></a> 
             </div>
             <button
               onClick={() => setSidebarOpen(false)}
