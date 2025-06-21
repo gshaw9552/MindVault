@@ -7,7 +7,6 @@ import { BACKEND_URL } from "../config/config";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { Logo } from "../icons/Logo";
-import { LightBulb } from "../icons/LightBulb";
 
 export function Signup() {
   const usernameRef = useRef<HTMLInputElement>(null);
@@ -45,7 +44,7 @@ export function Signup() {
       
       setSuccess(true);
       setTimeout(() => {
-        navigate("/signin");
+        navigate("/verify-signup", {state: { email }});
       }, 2000);
     } catch(err: any) {
       console.error("Signup error", err.response?.data || err.message);
@@ -162,16 +161,6 @@ export function Signup() {
               and{" "}
               <a href="#" className="text-purple-600 hover:underline">Privacy Policy</a>
             </p>
-          </div>
-
-          {/* Additional Links */}
-          <div className="mt-8 text-center">
-            <button
-              onClick={() => navigate("/")}
-              className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
-            >
-              ← Back to home
-            </button>
           </div>
         </div>
       </div>

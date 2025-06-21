@@ -2,7 +2,24 @@ import { normalizeYouTubeUrl } from "./ytUtils";
 
 export const getYouTubeEmbedUrl = (rawLink: string): string | null => {
   const watchUrl = normalizeYouTubeUrl(rawLink);
-  const videoId = new URL(watchUrl).searchParams.get("v");
+  let url: URL;
+  try {
+    url = new URL(watchUrl);
+  } catch {
+    return null;
+  }
+
+  const hostname = url.hostname.toLowerCase();
+  const listId = url.searchParams.get("list");
+  const videoId = url.searchParams.get("v");
+
+  // If it's a *standard* YouTube playlist (not the music subdomain), embed the whole list
+  const isStandardYouTube = hostname === "www.youtube.com" || hostname === "youtube.com";
+  if (listId && isStandardYouTube) {
+    return `https://www.youtube.com/embed/videoseries?list=${listId}`;
+  }
+
+  // Otherwise fall back to single‐video embed (this covers music.youtube.com and any video link)
   return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
 };
 

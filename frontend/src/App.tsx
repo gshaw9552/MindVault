@@ -5,11 +5,12 @@ import Dashboard from './pages/Dashboard'
 import { Home } from './pages/Home'
 import { PublicBrains } from './pages/PublicBrainPage'
 import { SharedBrainView } from './pages/SharedBrainView'
-
+import { Profile } from './pages/Profile'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { PublicRoute } from './components/PublicRoute'
-
-
+import { VerifySignup } from './pages/VerifySignup'
+import { ResetPassword } from './pages/ResetPassword'
+import { ForgotPassword } from './pages/ForgotPassword'
 
 function App() {
   
@@ -25,9 +26,29 @@ function App() {
           <Signin />
         </PublicRoute>
       } />
+      <Route path="/verify-signup" element={
+        <PublicRoute>
+          <VerifySignup />
+        </PublicRoute>
+      } />
+      <Route path="/reset-password" element={
+        <PublicRoute>
+          <ResetPassword />
+        </PublicRoute>
+      } />
+      <Route path="/forgot-password" element={
+        <PublicRoute>
+          <ForgotPassword />
+        </PublicRoute>
+      } />
       <Route path="/dashboard" element={
         <PrivateRoute>
           <Dashboard />
+        </PrivateRoute>
+        } />
+      <Route path="/profile" element={
+        <PrivateRoute>
+          <Profile />
         </PrivateRoute>
         } />
       <Route path="/" element={<Home />} />
@@ -37,9 +58,5 @@ function App() {
   </BrowserRouter>
   
 }
-// 2:34
+
 export default App
-
-
-// react-hook-forms
-// react-query

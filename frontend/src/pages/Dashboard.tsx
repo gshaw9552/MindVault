@@ -8,13 +8,16 @@ import { ContentGrid } from "../components/ContentGrid";
 import { useContent } from "../hooks/useContent";
 import { ShareBrainModal } from "../components/ShareBrainModal";
 import { EmptyState } from "../components/EmptyState";
-import { Header } from "../components/Header";
+import { SearchIcon } from "../icons/SearchIcon";
+import { useNavigate } from "react-router-dom";
+import { GroupIcon } from "../icons/GroupIcon";
 
 function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [filterType, setFilterType] = useState("all");
   const [shareModalOpen, setShareModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   // Use the custom hook for all content-related operations
   const { contentList, loading, error, createContent, deleteContent } = useContent();
@@ -51,10 +54,17 @@ function Dashboard() {
             startIcon={<PlusIcon />}
           />
           <Button 
-          onClick={() => setShareModalOpen(true)}
-          variant="secondary" 
-          text="Share Brain" 
-          startIcon={<ShareIcon />} />
+            onClick={() => setShareModalOpen(true)}
+            variant="secondary" 
+            text="Share Brain" 
+            startIcon={<ShareIcon />} 
+          />
+          <Button
+            onClick={() => navigate("/profile")}
+            variant="ghost"
+            text="Profile"
+            startIcon={<GroupIcon />}
+          />
         </div>
 
         {/* Loading or Error State (if any) */}
@@ -62,7 +72,9 @@ function Dashboard() {
         {error && <p className="text-center text-red-600">{error}</p>}
 
         {/* Content Grid */}
-        {visibleItems && visibleItems.length > 0 ? (<ContentGrid items={visibleItems} onDelete={deleteContent} />) : (<EmptyState title="No Content to Display"  description="use the Add Content Button to add your personlized content " />)}
+        {visibleItems && visibleItems.length > 0 ? 
+        (<ContentGrid items={visibleItems} onDelete={deleteContent} />) : 
+        (<EmptyState  icon={ <SearchIcon /> } title="No Content to Display"  description="use the Add Content Button to add your personlized content " />)}
       </Layout>
     </>
   );

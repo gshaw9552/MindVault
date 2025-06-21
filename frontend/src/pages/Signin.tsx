@@ -114,6 +114,14 @@ export function Signin() {
                 </button>
               </p>
             </div>
+            <div className="mt-4 text-center">
+              <button
+              onClick={() => navigate("/forgot-password")}
+              className="text-sm text-purple-600 hover:text-purple-700 font-medium hover:underline focus:outline-none focus:underline"
+              >
+                Forgot Password?
+              </button>
+</div>
           </div>
         </div>
       </div>

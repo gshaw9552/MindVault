@@ -50,7 +50,7 @@ export function Footer() {
           <div className="flex items-center gap-6 mt-4 sm:mt-0">
             <a href="#" className="text-sm text-gray-500 hover:text-purple-600 transition-colors">Privacy</a>
             <a href="#" className="text-sm text-gray-500 hover:text-purple-600 transition-colors">Terms</a>
-            <a href="#" className="text-sm text-gray-500 hover:text-purple-600 transition-colors">GitHub</a>
+            <a href="https://github.com/gshaw9552" className="text-sm text-gray-500 hover:text-purple-600 transition-colors">GitHub</a>
           </div>
         </div>
       </div>

@@ -2,9 +2,9 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { signInSchema, userSchema } from "./validationSchema";
-import { ContentModel, LinkModel, UserModel } from "./db";
+import { ContentModel, EmailVerificationModel, LinkModel, UserModel } from "./db";
 import { userMiddleware } from "./middleware";
-import { random } from "./utils";
+import { generateOtp, random, sendOTPEmail } from "./utils";
 import cors from "cors";
 
 const app = express();
@@ -32,13 +32,106 @@ app.post("/api/v1/signup", async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    await UserModel.create({
+    const user = await UserModel.create({
       username,
       email,
       password: hashedPassword,
+      isVerified: false,
     });
 
-    res.status(201).json({ message: "User signed up" });
+    const otp = generateOtp();
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+
+    await EmailVerificationModel.create({
+      userId: user._id,
+      otp,
+      purpose: 'signup',
+      expiresAt,
+    })
+
+    await sendOTPEmail(email, otp, 'signup');
+    
+    res.status(201).json({ 
+      message: "User created. Please check your email for verification code.", 
+      requiresVerification: true
+    });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+app.post("/api/v1/verify-signup-otp", async(req, res) => {
+  const { email, otp } = req.body;
+  
+  if(!email || !otp) {
+    res.status(400).json({ message: "Email and OTP are required" });
+    return;
+  }
+
+  try {
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    if (user.isVerified) {
+      res.status(400).json({ message: "User already verified" });
+      return;
+    }
+
+    const verification = await EmailVerificationModel.findOne({
+      userId: user._id,
+      otp,
+      purpose: 'signup',
+    });
+
+    if (!verification) {
+      res.status(400).json({ message: "Invalid or expired OTP" });
+      return;
+    }
+
+    user.isVerified = true;
+    await user.save();
+    await EmailVerificationModel.deleteOne({ _id: verification._id });
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET as string, {
+      expiresIn: "1h",
+    });
+
+    res.json({ message: "Email verified successfully", token });
+  } catch (err) {
+    console.error("Verify signup OTP error:", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+app.post("/api/v1/resend-signup-otp", async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    res.status(400).json({ message: "Email is required" });
+    return;
+  }
+
+  try {
+    const user = await UserModel.findOne({ email });
+    if (!user || user.isVerified) {
+      res.status(404).json({ message: "User not found or already verified" });
+      return;
+    }
+    const otp = generateOtp();
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+
+    await EmailVerificationModel.findOneAndUpdate(
+      { userId: user._id, purpose: 'signup' },
+      { otp, expiresAt },
+      { upsert: true, new: true }
+    );
+
+    await sendOTPEmail(email, otp, 'signup');
+
+    res.json({ message: "Verification code resent" });
   } catch (e) {
     console.error(e);
     res.status(500).json({ message: "Internal Server Error" });
@@ -65,6 +158,16 @@ app.post("/api/v1/signin", async (req, res) => {
       res.status(401).json({ message: "User not found" });
       return;
     }
+
+    if (!user.isVerified) {
+      res.status(403).json({ 
+        message: "Please verify your email before signing in",
+        requiresVerification: true,
+        email: user.email 
+      });
+      return;
+    }
+
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
       res.status(401).json({ message: "Incorrect password" });
@@ -78,6 +181,128 @@ app.post("/api/v1/signin", async (req, res) => {
     res.json({ message: "User signed in", token });
   } catch (err) {
     console.error("Signin error:", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+app.post("/api/v1/forgot-password", async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    res.status(400).json({ message: "Email is required" });
+    return;
+  }
+
+  try {
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      res.json({ message: "If the email exists, a reset code has been sent" });
+      return;
+    }
+
+    const otp = generateOtp();
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+
+    // Upsert verification record
+    await EmailVerificationModel.findOneAndUpdate(
+      { userId: user._id, purpose: 'reset' },
+      { otp, expiresAt },
+      { upsert: true, new: true }
+    );
+
+    await sendOTPEmail(email, otp, 'reset');
+
+    res.json({ message: "If the email exists, a reset code has been sent" });
+  } catch (err) {
+    console.error("Forgot password error:", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+app.post("/api/v1/verify-reset-otp", async (req, res) => {
+  const { email, otp, newPassword } = req.body;
+
+  if (!email || !otp || !newPassword) {
+    res.status(400).json({ message: "Email, OTP, and new password are required" });
+    return;
+  }
+
+  if (newPassword.length < 6) {
+    res.status(400).json({ message: "Password must be at least 6 characters" });
+    return;
+  }
+
+  try {
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    const verification = await EmailVerificationModel.findOne({
+      userId: user._id,
+      otp,
+      purpose: 'reset',
+    });
+
+    if (!verification) {
+      res.status(400).json({ message: "Invalid or expired OTP" });
+      return;
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+    await EmailVerificationModel.deleteOne({ _id: verification._id });
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET as string, {
+      expiresIn: "1h",
+    });
+
+    res.json({ message: "Password reset successfully", token });
+  } catch (err) {
+    console.error("Verify reset OTP error:", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+app.post("/api/v1/change-password", userMiddleware, async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    res.status(400).json({ message: "Old password and new password are required" });
+    return;
+  }
+
+  if (newPassword.length < 6) {
+    res.status(400).json({ message: "New password must be at least 6 characters" });
+    return;
+  }
+
+  try {
+    const user = await UserModel.findById(req.userId);
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    const passwordMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!passwordMatch) {
+      res.status(400).json({ message: "Current password is incorrect" });
+      return;
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET as string, {
+      expiresIn: "1h",
+    });
+
+    res.json({ message: "Password changed successfully", token });
+  } catch (err) {
+    console.error("Change password error:", err);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
@@ -205,6 +430,20 @@ app.get("/api/v1/brain/:shareLink", async (req, res) => {
     username: user!.username,
     content,
   });
+});
+
+app.get("/api/v1/me", userMiddleware, async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.userId).select("username email");
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+    res.json({ username: user.username, email: user.email });
+  } catch (err) {
+    console.error("Fetch user profile error:", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 });
 
 app.listen(3000, () => {

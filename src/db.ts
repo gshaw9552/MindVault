@@ -16,10 +16,9 @@ mongoose.connect(mongoURI)
 const UserSchema = new Schema({
     username: { type: String, unique: true },
     email: { type: String, unique: true },
-    password: { type: String, required: true }
+    password: { type: String, required: true },
+    isVerified: { type: Boolean, default: false}
 });
-
-export const UserModel = model("User", UserSchema);
 
 const ContentSchema = new Schema(
   {
@@ -44,5 +43,16 @@ const LinkSchema = new Schema({
   }
 )
 
+const emailVerificationSchema = new Schema({
+  userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  otp: { type: String, required: true },
+  purpose: { type: String, enum: ['signup', 'reset'], required: true},
+  expiresAt: { type: Date,   required: true, expires: 0 },
+}, {
+  timestamps: true,
+});
+
+export const UserModel = model("User", UserSchema);
 export const LinkModel = model("Links", LinkSchema);
 export const ContentModel = model("Content", ContentSchema);
+export const EmailVerificationModel = model("EmailVerification",  emailVerificationSchema);

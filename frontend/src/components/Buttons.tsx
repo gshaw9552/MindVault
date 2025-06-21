@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 
 interface ButtonProps {
   type?: "button" | "submit" | "reset";
-  variant: "primary" | "secondary" | "danger" | "outline";
+  variant: "primary" | "secondary" | "danger" | "outline" | "ghost" | "solid" | "normal";
   text: string;
   startIcon?: ReactElement;
   endIcon?: ReactElement;
@@ -13,10 +13,13 @@ interface ButtonProps {
 }
 
 const variantClasses: Record<ButtonProps["variant"], string> = {
-  primary: "bg-purple-600 text-white hover:bg-purple-700",
+  primary: "bg-gradient-to-r from-purple-600 to-purple-700 text-white hover:from-purple-700 hover:to-purple-800",
   secondary: "bg-purple-200 text-purple-600 hover:bg-purple-300",
   danger: "bg-red-500 text-white hover:bg-red-600",
   outline: "border border-gray-300 text-gray-700 hover:bg-gray-100",
+  ghost: "text-purple-600 hover:bg-purple-50 hover:text-purple-700 border border-purple-600",
+  solid: "bg-purple-500 text-white hover:bg-purple-600",
+  normal: "text-purple-600 hover:text-purple-700 font-medium hover:underline focus:outline-none focus:underline",
 };
 
 const defaultStyles = "font-medium px-4 py-2 rounded-md font-light flex items-center transition-colors duration-200";

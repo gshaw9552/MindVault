@@ -10,7 +10,9 @@ interface InputProps {
   label?: string;
   required?: boolean;
   autoComplete?: string;
+  maxLength?: number;
   className?: string;
+  defaultValue?: string;
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -22,8 +24,10 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     disabled = false,
     error,
     label,
+    maxLength,
     required = false,
     autoComplete,
+    defaultValue,
     className = "",
     ...props 
   }, ref) => {
