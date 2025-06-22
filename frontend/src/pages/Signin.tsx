@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import { Button } from "../components/Buttons";
 import { Input } from "../components/Input";
 import { useNavigate } from "react-router-dom";
-import { BACKEND_URL } from "../config/config";
+import { API_BASE } from "../config/config";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { Logo } from "../icons/Logo";
@@ -29,7 +29,7 @@ export function Signin() {
     setError("");
 
     try {
-      const res = await axios.post(`${BACKEND_URL}/api/v1/signin`, {
+      const res = await axios.post(`${API_BASE}/signin`, {
         email: identifier?.includes("@") ? identifier : undefined,
         username: !identifier?.includes("@") ? identifier : undefined,
         password

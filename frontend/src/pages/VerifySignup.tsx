@@ -3,7 +3,7 @@ import { useRef, useState, useEffect } from "react";
 import { Button } from "../components/Buttons";
 import { Input } from "../components/Input";
 import { useNavigate, useLocation } from "react-router-dom";
-import { BACKEND_URL } from "../config/config";
+import { API_BASE } from "../config/config";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { Logo } from "../icons/Logo";
@@ -42,7 +42,7 @@ export function VerifySignup() {
     setError("");
 
     try {
-      const res = await axios.post(`${BACKEND_URL}/api/v1/verify-signup-otp`, {
+      const res = await axios.post(`${API_BASE}/verify-signup-otp`, {
         email,
         otp
       });
@@ -67,7 +67,7 @@ export function VerifySignup() {
   const resendOTP = async () => {
     try {
       setIsLoading(true);
-      await axios.post(`${BACKEND_URL}/api/v1/resend-signup-otp`, {
+      await axios.post(`${API_BASE}/resend-signup-otp`, {
         email,
       });
       setError("");

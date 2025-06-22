@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import { Button } from "../components/Buttons";
 import { Input } from "../components/Input";
 import { useNavigate } from "react-router-dom";
-import { BACKEND_URL } from "../config/config";
+import { API_BASE } from "../config/config";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { Logo } from "../icons/Logo";
@@ -31,7 +31,7 @@ export function ForgotPassword() {
     setError("");
 
     try {
-      await axios.post(`${BACKEND_URL}/api/v1/forgot-password`, {
+      await axios.post(`${API_BASE}/forgot-password`, {
         email
       });
 
