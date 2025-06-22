@@ -28,7 +28,7 @@ export function Signup() {
     }
 
     if (password.length < 6) {
-      setError("Password must be at least 6 characters long");
+      setError("Password must be at least 8 characters long");
       return;
     }
 
@@ -129,6 +129,9 @@ export function Signup() {
                   type="password"
                   onKeyDown={handleKeyDown}
                 />
+                <p className="text-xs text-gray-500 mt-1">
+                  Must include at least 1 uppercase letter, number, and special character.
+                </p>
               </div>
 
               <Button
