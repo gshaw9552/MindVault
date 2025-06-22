@@ -5,6 +5,7 @@ import { ShareIcon } from "../icons/ShareIcon";
 import { CopyIcon } from "../icons/CopyIcon";
 import { CheckIcon } from "../icons/CheckIcon";
 import { API_BASE } from "../config/config";
+import { useToast } from "./ToastProvider";
 
 interface ShareBrainModalProps {
   open: boolean;
@@ -13,6 +14,8 @@ interface ShareBrainModalProps {
 
 export function ShareBrainModal({ open, onClose }: ShareBrainModalProps) {
   if (!open) return null;
+
+  const { showToast } = useToast();
 
   const [isShared, setIsShared] = useState(false);
   const [shareUrl, setShareUrl] = useState("");
@@ -49,7 +52,7 @@ export function ShareBrainModal({ open, onClose }: ShareBrainModalProps) {
 
   // 2) Create share link
   const handleShareBrain = async () => {
-    if (!token) return alert("Sign in first.");
+    if (!token) return showToast("Sign in first.", "error");
     setLoading(true);
     try {
       const res = await fetch(`${API_BASE}/brain/share`, {
@@ -66,7 +69,7 @@ export function ShareBrainModal({ open, onClose }: ShareBrainModalProps) {
       // Updated route path
       setShareUrl(`${window.location.origin}/brain/share/${data.hash}`);
     } catch (err: any) {
-      alert(err.message);
+      showToast(err.message, "error");
     } finally {
       setLoading(false);
     }
@@ -87,7 +90,7 @@ export function ShareBrainModal({ open, onClose }: ShareBrainModalProps) {
       setShareUrl("");
       setCopied(false);
     } catch (err: any) {
-      alert(err.message);
+      showToast(err.message, "error");
     } finally {
       setLoading(false);
     }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { API_BASE } from "../config/config";
+import { useToast } from "../components/ToastProvider";
 
 export interface ContentItem {
   _id: string;
@@ -11,6 +12,7 @@ export interface ContentItem {
 }
 
 export function useContent() {
+  const { showToast } = useToast();
   const [contentList, setContentList] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -59,7 +61,7 @@ async function createContent(data: {
 }): Promise<ContentItem | null> {
   const token = localStorage.getItem("token");
   if (!token) {
-    alert("You must be signed in to add content.");
+    showToast("You must be signed in to add content.", "error");
     return null;
   }
 
@@ -86,7 +88,7 @@ async function createContent(data: {
     return createdItem;
   } catch (err: any) {
     console.error("useContent create error:", err);
-    alert("Failed to add content: " + err.message);
+    showToast("Failed to add content: " + err.message, "error");
     return null;
   }
 }
@@ -96,7 +98,7 @@ async function createContent(data: {
   async function deleteContent(contentId: string): Promise<boolean> {
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("You must be signed in to delete.");
+      showToast("You must be signed in to delete.", "error");
       return false;
     }
     if (!window.confirm("Delete this item?")) {
@@ -120,7 +122,7 @@ async function createContent(data: {
       return true;
     } catch (err: any) {
       console.error("useContent delete error:", err);
-      alert("Failed to delete: " + err.message);
+      showToast("Failed to delete: " + err.message, "error");
       return false;
     }
   }
@@ -132,4 +134,15 @@ async function createContent(data: {
     createContent,
     deleteContent,
   };
+}
+
+export async function semanticSearch(query: string): Promise<ContentItem[]> {
+  const token = localStorage.getItem("token");
+  const res = await fetch(`${API_BASE}/search/semantic?q=${encodeURIComponent(query)}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  const body = await res.json();
+  return body.results;
 }

@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import { signInSchema, userSchema } from "./validationSchema";
 import { ContentModel, EmailVerificationModel, LinkModel, UserModel } from "./db";
 import { userMiddleware } from "./middleware";
-import { generateOtp, random, sendOTPEmail } from "./utils";
+import { cosineSimilarity, generateOtp, random, sendOTPEmail } from "./utils";
 import cors from "cors";
 
 const app = express();
@@ -309,9 +309,9 @@ app.post("/api/v1/change-password", userMiddleware, async (req, res) => {
 
 app.post("/api/v1/content", userMiddleware, async (req, res) => {
   try {
-    const { link, type, title, description } = req.body;
+    const { link, type, title, description, embedding } = req.body;
 
-    if (!link || !type || !title) {
+    if (!link || !type || !title || !Array.isArray(embedding)) {
       res.status(400).json({
         message: "Missing required fields",
       });
@@ -325,6 +325,7 @@ app.post("/api/v1/content", userMiddleware, async (req, res) => {
       userId: req.userId,
       description,
       tags: [],
+      embedding,
     });
 
     res.status(201).json({
@@ -444,6 +445,26 @@ app.get("/api/v1/me", userMiddleware, async (req, res) => {
     console.error("Fetch user profile error:", err);
     res.status(500).json({ message: "Internal Server Error" });
   }
+});
+
+app.post("/api/v1/search/semantic", userMiddleware, async (req, res) => {
+  const { vector } = req.body;
+  if (!Array.isArray(vector)) {
+    res.status(400).json({ message: "Missing query vector" });
+    return;
+  }
+
+  const items = await ContentModel.find({ userId: req.userId, embedding: { $exists: true } });
+  const scored = items
+    .map(item => ({
+      ...item.toObject(),
+      score: cosineSimilarity(vector, item.embedding as number[]),
+    }))
+    .filter((x) => x.score > 0.25)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 10);
+
+  res.json({ results: scored });
 });
 
 app.listen(3000, () => {

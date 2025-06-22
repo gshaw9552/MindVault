@@ -3,8 +3,10 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { Input } from "../components/Input";
 import { Button } from "../components/Buttons";
 import { API_BASE } from "../config/config";
+import { useToast } from "../components/ToastProvider";
 
 export function ResetPassword() {
+  const { showToast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const emailRef = useRef<HTMLInputElement>(null);
@@ -55,7 +57,7 @@ export function ResetPassword() {
         throw new Error(data.error || "Reset failed");
       }
 
-      alert("Password reset successful!");
+      showToast("Password reset successful!", "success");
       navigate("/signin");
     } catch (err: any) {
       setError(err.message);

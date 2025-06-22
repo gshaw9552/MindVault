@@ -11,6 +11,7 @@ import { PublicRoute } from './components/PublicRoute'
 import { VerifySignup } from './pages/VerifySignup'
 import { ResetPassword } from './pages/ResetPassword'
 import { ForgotPassword } from './pages/ForgotPassword'
+import { SemanticSearch } from './pages/SemanticSearch'
 
 function App() {
   
@@ -50,6 +51,11 @@ function App() {
         <PrivateRoute>
           <Profile />
         </PrivateRoute>
+        } />
+        <Route path="/search" element={
+          <PrivateRoute>
+            <SemanticSearch />
+          </PrivateRoute>
         } />
       <Route path="/" element={<Home />} />
       <Route path="/public-brains" element={<PublicBrains />} />

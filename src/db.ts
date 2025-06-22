@@ -28,6 +28,7 @@ const ContentSchema = new Schema(
     type: String,
     description: { type: String, required: false},
     userId: {type: mongoose.Types.ObjectId, ref: 'User', required: true },
+    embedding: { type: [Number], default: [] },
   },
   {
     timestamps: true,

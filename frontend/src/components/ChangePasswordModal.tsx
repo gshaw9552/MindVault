@@ -3,6 +3,8 @@ import { CrossIcon } from "../icons/CrossIcon";
 import { Button } from "./Buttons";
 import { Input } from "./Input";
 import { API_BASE } from "../config/config";
+import { useToast } from "./ToastProvider";
+
 
 interface ChangePasswordModalProps {
   open: boolean;
@@ -10,6 +12,8 @@ interface ChangePasswordModalProps {
 }
 
 export function ChangePasswordModal({ open, onClose }: ChangePasswordModalProps) {
+  const { showToast } = useToast();
+
   const currentPasswordRef = useRef<HTMLInputElement>(null);
   const newPasswordRef = useRef<HTMLInputElement>(null);
   const confirmPasswordRef = useRef<HTMLInputElement>(null);
@@ -77,7 +81,7 @@ export function ChangePasswordModal({ open, onClose }: ChangePasswordModalProps)
         throw new Error(data.error || "Password change failed");
       }
 
-      alert("Password changed successfully!");
+      showToast("Password changed successfully!", "success");
       
       // Clear form
       if (currentPasswordRef.current) currentPasswordRef.current.value = "";

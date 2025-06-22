@@ -1,12 +1,21 @@
-import React, { MouseEvent, useRef } from "react";
+// frontend/src/components/CreateContentModal.tsx
+import React, { useState, MouseEvent, useRef } from "react";
 import { CrossIcon } from "../icons/CrossIcon";
 import { Button } from "./Buttons";
 import { Input } from "./Input";
+import { useToast } from "./ToastProvider";
+import { useEmbed } from "../hooks/useEmbed";
 
 interface CreateContentModalProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: { title: string; link: string; type: string; description?: string }) => void;
+  onSubmit: (data: {
+    title: string;
+    link: string;
+    type: string;
+    description?: string;
+    embedding: number[];
+  }) => void;
 }
 
 export function CreateContentModal({
@@ -14,70 +23,69 @@ export function CreateContentModal({
   onClose,
   onSubmit,
 }: CreateContentModalProps) {
+  const { showToast } = useToast();
+  const { embed } = useEmbed();
+  const [isLoading, setIsLoading] = useState(false);
+
   const titleRef = useRef<HTMLInputElement>(null);
-  const linkRef = useRef<HTMLInputElement>(null);
-  const typeRef = useRef<HTMLSelectElement>(null);
-  const descRef = useRef<HTMLTextAreaElement>(null);
+  const linkRef  = useRef<HTMLInputElement>(null);
+  const typeRef  = useRef<HTMLSelectElement>(null);
+  const descRef  = useRef<HTMLTextAreaElement>(null);
 
   if (!open) return null;
 
-  // Close when clicking the backdrop
-  const handleBackdropClick = () => {
-    onClose();
-  };
+  const handleBackdropClick = () => onClose();
+  const handleModalClick   = (e: MouseEvent) => e.stopPropagation();
 
-  // Prevent closing when clicking inside the white box
-  const handleModalClick = (e: MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-  };
-
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const title = titleRef.current?.value.trim() || "";
-    const link = linkRef.current?.value.trim() || "";
-    const type = typeRef.current?.value.trim() || "";
-    const raw = descRef.current?.value.trim();
-    const description = raw && raw.length > 0 ? raw : undefined;
+    const title       = titleRef.current?.value.trim()      || "";
+    const link        = linkRef.current?.value.trim()       || "";
+    const type        = typeRef.current?.value.trim()       || "";
+    const rawDesc     = descRef.current?.value.trim()       || "";
+    const description = rawDesc.length > 0 ? rawDesc : undefined;
 
-    // Modified validation - Note type doesn't require a link
+    // Basic validation
     if (!title || !type) {
-      alert("Title and Type are required.");
+      showToast("Title and Type are required.", "error");
       return;
     }
-
-    // For non-note types, link is required
     if (type !== "note" && !link) {
-      alert("Link is required for this content type.");
+      showToast("Link is required for this content type.", "error");
       return;
     }
-
-    // For note type, description is required
     if (type === "note" && !description) {
-      alert("Description is required for Note type.");
+      showToast("Description is required for Note type.", "error");
       return;
     }
 
-    onSubmit({ 
-      title, 
-      link: type === "note" ? "#" : link, // Use placeholder link for notes
-      type, 
-      description 
-    });
+    setIsLoading(true);
 
-    // Clear for next time
-    if (titleRef.current) titleRef.current.value = "";
-    if (linkRef.current) linkRef.current.value = "";
-    if (typeRef.current) typeRef.current.value = "";
-    if (descRef.current) descRef.current.value = "";
+    // Generate embedding
+    let embedding: number[];
+    try {
+      embedding = await embed(`${title} ${description || ""}`);
+    } catch (err) {
+      console.error("Embedding failed:", err);
+      showToast("Embedding failed, using fallback vector.", "error");
+      embedding = Array(512).fill(0);
+    }
 
+    // Clear inputs *before* closing
+    if (titleRef.current)   titleRef.current.value   = "";
+    if (linkRef.current)    linkRef.current.value    = "";
+    if (typeRef.current)    typeRef.current.value    = "";
+    if (descRef.current)    descRef.current.value    = "";
+
+    // Submit data
+    onSubmit({ title, link: type === "note" ? "#" : link, type, description, embedding });
+
+    setIsLoading(false);
     onClose();
   };
 
-  // Get current selected type to show/hide link field
   const handleTypeChange = () => {
-    // This will trigger a re-render when type changes
-    const selectedType = typeRef.current?.value;
-    if (selectedType === "note" && linkRef.current) {
+    if (typeRef.current?.value === "note" && linkRef.current) {
       linkRef.current.value = "";
     }
   };
@@ -91,10 +99,9 @@ export function CreateContentModal({
         className="bg-white rounded-lg shadow-lg w-full max-w-md p-6"
         onClick={handleModalClick}
       >
-
         <div className="flex justify-end">
           <button onClick={onClose} aria-label="Close modal">
-           <div className="h-6 w-6 text-gray-600 hover:text-gray-800" > <CrossIcon /> </div>
+            <div className="h-6 w-6 text-gray-600 hover:text-gray-800"> <CrossIcon /> </div>
           </button>
         </div>
 
@@ -104,8 +111,8 @@ export function CreateContentModal({
 
         <form onSubmit={handleFormSubmit} className="flex flex-col gap-4">
           <Input inputRef={titleRef} placeholder="Title" />
-          
-          {/* Conditional Link field - hidden for Note type */}
+
+          {/* Conditional Link field */}
           <div id="link-field">
             <Input inputRef={linkRef} placeholder="Link (URL)" />
           </div>
@@ -132,18 +139,21 @@ export function CreateContentModal({
           <label className="block">
             <span className="text-sm font-medium">
               Description 
-              {/* Show required indicator for Note type */}
-              <span id="desc-required" className="text-red-500 hidden"> *</span>
-              <span id="desc-optional" className="text-gray-500"> (optional)</span>
             </span>
             <textarea
               ref={descRef}
               placeholder="Write a short note…"
-              className="w-full mt-1 p-2 border rounded h-24 resize-y focus:outline-none focus:ring-2 focus:ring-purple-400" 
+              className="w-full mt-1 p-2 border rounded h-24 resize-y focus:outline-none focus:ring-2 focus:ring-purple-400"
             />
           </label>
 
-          <Button type="submit" variant="primary" text="Submit" fullWidth />
+          <Button 
+            type="submit" 
+            variant="primary" 
+            text={isLoading ? "Adding…" : "Submit"} 
+            fullWidth 
+            disabled={isLoading}
+          />
         </form>
       </div>
     </div>
