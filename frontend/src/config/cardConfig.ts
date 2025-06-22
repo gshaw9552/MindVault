@@ -17,17 +17,17 @@ export const CARD_TYPE_CONFIG: Record<CardType, CardTypeConfig> = {
   youtube: {
     icon: YoutubeIcon,
     color: "text-red-500",
-    label: "YouTube Video"
+    label: "YouTube Video/Shorts"
   },
   twitter: {
     icon: TwitterIcon,
     color: "text-blue-400",
-    label: "Twitter Post"
+    label: "Twitter Post/Video"
   },
   instagram: {
     icon: InstagramIcon,
     color: "text-pink-500",
-    label: "Instagram Post"
+    label: "Instagram Post/Reel"
   },
   note: {
     icon: NoteIcon,

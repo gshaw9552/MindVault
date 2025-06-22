@@ -8,14 +8,12 @@ export function useEmbed() {
   // Load or return cached model
   async function loadModel() {
     if (!modelRef.current) {
-      // Optional: tf.ready() ensures backend is initialized
       await tf.ready();
       modelRef.current = await use.load();
     }
     return modelRef.current;
   }
 
-  // Embed a single string → 512-dim vector
   async function embed(text: string): Promise<number[]> {
     const model = await loadModel();
     const embeddings = await model.embed([text]);

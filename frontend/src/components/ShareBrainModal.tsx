@@ -39,7 +39,7 @@ export function ShareBrainModal({ open, onClose }: ShareBrainModalProps) {
       .then((data: { hash: string; username: string }) => {
         setIsShared(true);
         setUsername(data.username);
-        // Ensure correct route segment
+
         const url = `${window.location.origin}/brain/share/${data.hash}`;
         setShareUrl(url);
       })
@@ -66,7 +66,7 @@ export function ShareBrainModal({ open, onClose }: ShareBrainModalProps) {
       const data = (await res.json()) as { hash: string; username: string };
       setIsShared(true);
       setUsername(data.username);
-      // Updated route path
+
       setShareUrl(`${window.location.origin}/brain/share/${data.hash}`);
     } catch (err: any) {
       showToast(err.message, "error");
@@ -103,7 +103,6 @@ export function ShareBrainModal({ open, onClose }: ShareBrainModalProps) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // Modal render
   return (
     <div
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"

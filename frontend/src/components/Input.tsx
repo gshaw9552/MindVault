@@ -16,10 +16,10 @@ interface InputProps {
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ 
-    placeholder, 
-    type = "text", 
-    inputRef, 
+  ({
+    placeholder,
+    type = "text",
+    inputRef,
     onKeyDown,
     disabled = false,
     error,
@@ -29,9 +29,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     autoComplete,
     defaultValue,
     className = "",
-    ...props 
+    ...props
   }, ref) => {
-    // Use the passed ref or the inputRef prop
+
     const inputReference = inputRef || ref;
 
     return (

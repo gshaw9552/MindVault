@@ -22,13 +22,13 @@ export function useSemanticSearch() {
       setLoading(false);
       return;
     }
-    
+
     const res = await fetch(`${API_BASE}/search/semantic`, {
       method: "POST",
-      headers: { 
+      headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}` 
-    },
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ vector }),
     });
     const json = await res.json();

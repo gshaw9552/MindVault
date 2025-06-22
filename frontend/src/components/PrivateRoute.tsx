@@ -6,7 +6,7 @@ interface PrivateRouteProps {
   children: ReactNode;
 }
 
-interface JwtPayload { exp: number; /* plus any custom claims */ }
+interface JwtPayload { exp: number; }
 
 export function PrivateRoute({ children }: PrivateRouteProps) {
   const token = localStorage.getItem("token");

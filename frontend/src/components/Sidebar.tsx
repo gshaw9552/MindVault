@@ -27,12 +27,10 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, onFilterChange, currentFi
     navigate("/signin", { replace: true });
   };
 
-  // Helper function to get icon color for each content type
   const getIconColor = (type: CardType): string => {
     return getCardTypeConfig(type).color;
   };
 
-  // Define sidebar items with their corresponding filter types
   const sidebarItems = [
     {
       title: "All Content",
@@ -46,7 +44,7 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, onFilterChange, currentFi
     },
     {
       title: "YouTube",
-      filterType: "youtube", 
+      filterType: "youtube",
       icon: <div className={getIconColor("youtube")}><YoutubeIcon /></div>
     },
     {
@@ -73,11 +71,9 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, onFilterChange, currentFi
 
   return (
     <div
-      className={`flex flex-col h-screen fixed top-0 left-0 z-50 overflow-hidden bg-white border-r transition-[width] duration-300 ${
-        sidebarOpen ? "w-72" : "w-12 bg-gray-100 border-r-0"
-      }`}
+      className={`flex flex-col h-screen fixed top-0 left-0 z-50 overflow-hidden bg-white border-r transition-[width] duration-300 ${sidebarOpen ? "w-72" : "w-12 bg-gray-100 border-r-0"
+        }`}
     >
-      {/* Top Section */}
       <div className="pt-6 px-2 flex justify-between items-center">
         {sidebarOpen ? (
           <>
@@ -85,7 +81,7 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, onFilterChange, currentFi
               <div className="pr-2 text-purple-800">
                 <Logo />
               </div>
-              <a href="/"><span>MindVault</span></a> 
+              <a href="/"><span>MindVault</span></a>
             </div>
             <button
               onClick={() => setSidebarOpen(false)}
@@ -106,13 +102,11 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, onFilterChange, currentFi
         )}
       </div>
 
-      {/* Navigation items */}
       <div
-        className={`pt-8 transition-all duration-300 ${
-          sidebarOpen
+        className={`pt-8 transition-all duration-300 ${sidebarOpen
             ? "opacity-100 pl-2 max-h-[500px]"
             : "opacity-0 pl-0 max-h-0 pointer-events-none"
-        }`}
+          }`}
       >
         {sidebarItems.map((item) => (
           <SidebarItem

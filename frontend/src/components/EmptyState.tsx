@@ -11,14 +11,14 @@ interface EmptyStateProps {
   showButton?: boolean;
 }
 
-export function EmptyState({ 
-  icon, 
-  title, 
-  description, 
-  buttonText, 
-  buttonIcon, 
-  onButtonClick, 
-  showButton = true 
+export function EmptyState({
+  icon,
+  title,
+  description,
+  buttonText,
+  buttonIcon,
+  onButtonClick,
+  showButton = true
 }: EmptyStateProps) {
   return (
     <div className="text-center py-12">

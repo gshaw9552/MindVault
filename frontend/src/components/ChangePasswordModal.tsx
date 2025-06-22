@@ -82,12 +82,12 @@ export function ChangePasswordModal({ open, onClose }: ChangePasswordModalProps)
       }
 
       showToast("Password changed successfully!", "success");
-      
+
       // Clear form
       if (currentPasswordRef.current) currentPasswordRef.current.value = "";
       if (newPasswordRef.current) newPasswordRef.current.value = "";
       if (confirmPasswordRef.current) confirmPasswordRef.current.value = "";
-      
+
       onClose();
     } catch (err: any) {
       setError(err.message);

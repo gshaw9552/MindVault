@@ -50,9 +50,9 @@ app.post("/api/v1/signup", async (req, res) => {
     })
 
     await sendOTPEmail(email, otp, 'signup');
-    
-    res.status(201).json({ 
-      message: "User created. Please check your email for verification code.", 
+
+    res.status(201).json({
+      message: "User created. Please check your email for verification code.",
       requiresVerification: true
     });
   } catch (e) {
@@ -61,10 +61,10 @@ app.post("/api/v1/signup", async (req, res) => {
   }
 });
 
-app.post("/api/v1/verify-signup-otp", async(req, res) => {
+app.post("/api/v1/verify-signup-otp", async (req, res) => {
   const { email, otp } = req.body;
-  
-  if(!email || !otp) {
+
+  if (!email || !otp) {
     res.status(400).json({ message: "Email and OTP are required" });
     return;
   }
@@ -160,10 +160,10 @@ app.post("/api/v1/signin", async (req, res) => {
     }
 
     if (!user.isVerified) {
-      res.status(403).json({ 
+      res.status(403).json({
         message: "Please verify your email before signing in",
         requiresVerification: true,
-        email: user.email 
+        email: user.email
       });
       return;
     }
@@ -360,7 +360,7 @@ app.delete("/api/v1/content", userMiddleware, async (req, res) => {
       _id: contentId,
       userId: req.userId,
     });
-    
+
 
     res.json({ message: "Content deleted" });
   } catch (err) {
@@ -388,7 +388,7 @@ app.get("/api/v1/public-brains", async (_, res) => {
 
     const brains = links.map(link => ({
       username: link.userId.username,
-      hash:     link.hash,
+      hash: link.hash,
       createdAt: link.createdAt,
     }));
 
@@ -419,7 +419,7 @@ app.delete("/api/v1/brain/me/link", userMiddleware, async (req, res) => {
 app.get("/api/v1/brain/:shareLink", async (req, res) => {
   const hash = req.params.shareLink.trim();
   const link = await LinkModel.findOne({ hash });
-  if (!link) { 
+  if (!link) {
     res.status(404).json({ message: "Not found" });
     return;
   }

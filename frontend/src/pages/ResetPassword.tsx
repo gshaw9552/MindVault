@@ -16,7 +16,6 @@ export function ResetPassword() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Pre-fill email if came from forgot password flow
   const prefilledEmail = searchParams.get("email") || "";
 
   const handleSubmit = async (e: React.FormEvent) => {

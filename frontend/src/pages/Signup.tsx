@@ -38,15 +38,15 @@ export function Signup() {
     try {
       await axios.post(`${BACKEND_URL}/api/v1/signup`, {
         username,
-        email, 
+        email,
         password
       });
-      
+
       setSuccess(true);
       setTimeout(() => {
-        navigate("/verify-signup", {state: { email }});
+        navigate("/verify-signup", { state: { email } });
       }, 2000);
-    } catch(err: any) {
+    } catch (err: any) {
       console.error("Signup error", err.response?.data || err.message);
       setError(err.response?.data?.message || "Sign up failed. Please try again.");
     } finally {
@@ -64,7 +64,7 @@ export function Signup() {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col">
         <Header />
-        
+
         <div className="flex-1 flex items-center justify-center px-4 py-12">
           <div className="max-w-md w-full text-center">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
@@ -88,7 +88,7 @@ export function Signup() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
-      
+
       <div className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
@@ -112,30 +112,30 @@ export function Signup() {
               )}
 
               <div className="space-y-4">
-                <Input 
-                  inputRef={usernameRef} 
+                <Input
+                  inputRef={usernameRef}
                   placeholder="Username"
                   onKeyDown={handleKeyDown}
                 />
-                <Input 
-                  inputRef={emailRef} 
-                  placeholder="Email" 
+                <Input
+                  inputRef={emailRef}
+                  placeholder="Email"
                   type="email"
                   onKeyDown={handleKeyDown}
                 />
-                <Input 
-                  inputRef={passwordRef} 
-                  placeholder="Password (min. 8 characters)" 
+                <Input
+                  inputRef={passwordRef}
+                  placeholder="Password (min. 8 characters)"
                   type="password"
                   onKeyDown={handleKeyDown}
                 />
               </div>
 
-              <Button 
-                onClick={signup} 
-                variant="primary" 
+              <Button
+                onClick={signup}
+                variant="primary"
                 text={isLoading ? "Creating account..." : "Create Account"}
-                fullWidth={true} 
+                fullWidth={true}
                 loading={isLoading}
               />
             </div>

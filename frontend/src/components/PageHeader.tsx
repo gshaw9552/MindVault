@@ -17,15 +17,15 @@ export function PageHeader({ icon, title, description, subtitle }: PageHeaderPro
           </div>
         </div>
       </div>
-      
+
       <h1 className="text-4xl font-bold mb-4 text-gray-900">
         {title}
       </h1>
-      
+
       <p className="text-lg text-gray-700 mb-4 max-w-2xl mx-auto">
         {description}
       </p>
-      
+
       {subtitle && (
         <p className="text-gray-600 max-w-xl mx-auto leading-relaxed mb-8">
           {subtitle}

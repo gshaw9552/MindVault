@@ -13,10 +13,10 @@ import { HomeIcon } from "../icons/HomeIcon";
 import { GroupIcon } from "../icons/GroupIcon";
 import { SearchIcon } from "../icons/SearchIcon";
 
-interface SharedBrainInfo { 
-  username: string; 
-  hash: string; 
-  createdAt: string; 
+interface SharedBrainInfo {
+  username: string;
+  hash: string;
+  createdAt: string;
 }
 
 export function PublicBrains() {
@@ -43,13 +43,12 @@ export function PublicBrains() {
   );
 
   return (
-    <Layout 
-      sidebarOpen={false} 
-      setSidebarOpen={() => {}} 
-      onFilterChange={() => {}} 
+    <Layout
+      sidebarOpen={false}
+      setSidebarOpen={() => { }}
+      onFilterChange={() => { }}
       currentFilter="all"
     >
-      {/* Header Section */}
       <PageHeader
         icon={<GroupIcon />}
         title="Public Knowledge Vaults"
@@ -57,7 +56,6 @@ export function PublicBrains() {
         subtitle={`Browse through ${brains.length} public vaults filled with insights, articles, and ideas shared by fellow knowledge seekers.`}
       />
 
-      {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
         <Button
           text="Create Your Own Vault"
@@ -73,11 +71,10 @@ export function PublicBrains() {
           text="Back to Home"
           variant="secondary"
           onClick={() => navigate('/')}
-          startIcon={ <HomeIcon /> }
+          startIcon={<HomeIcon />}
         />
       </div>
 
-      {/* Search Bar */}
       <SearchInput
         value={searchTerm}
         onChange={setSearchTerm}
@@ -85,7 +82,6 @@ export function PublicBrains() {
         show={brains.length > 0}
       />
 
-      {/* Loading State */}
       {loading && <LoadingSpinner message="Loading public vaults..." />}
 
       {/* Empty State */}
@@ -104,7 +100,6 @@ export function PublicBrains() {
         />
       )}
 
-      {/* No Search Results */}
       {!loading && brains.length > 0 && filteredBrains.length === 0 && (
         <EmptyState
           icon={<SearchIcon />}
@@ -116,7 +111,6 @@ export function PublicBrains() {
         />
       )}
 
-      {/* Results and Content Grid */}
       {!loading && filteredBrains.length > 0 && (
         <>
           <div className="mb-6">
@@ -124,7 +118,7 @@ export function PublicBrains() {
               {searchTerm ? `Search Results (${filteredBrains.length})` : `All Vaults (${brains.length})`}
             </h2>
             <p className="text-gray-600">
-              {searchTerm 
+              {searchTerm
                 ? `Found ${filteredBrains.length} vault${filteredBrains.length !== 1 ? 's' : ''} matching "${searchTerm}"`
                 : "Explore knowledge collections from the community"
               }

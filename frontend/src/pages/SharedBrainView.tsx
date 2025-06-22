@@ -23,7 +23,7 @@ export function SharedBrainView() {
 
   useEffect(() => {
     if (!shareLink) return;
-    
+
     setLoading(true);
     fetch(`${API_BASE}/brain/${shareLink}`)
       .then((res) => {
@@ -45,8 +45,8 @@ export function SharedBrainView() {
     return (
       <Layout
         sidebarOpen={false}
-        setSidebarOpen={() => {}}
-        onFilterChange={() => {}}
+        setSidebarOpen={() => { }}
+        onFilterChange={() => { }}
         currentFilter="all"
       >
         <div className="max-w-4xl mx-auto py-8">
@@ -64,12 +64,11 @@ export function SharedBrainView() {
   return (
     <Layout
       sidebarOpen={false}
-      setSidebarOpen={() => {}}
-      onFilterChange={() => {}}
+      setSidebarOpen={() => { }}
+      onFilterChange={() => { }}
       currentFilter="all"
     >
       <div className="max-w-4xl mx-auto py-8">
-        {/* Header */}
         <div className="bg-white rounded-lg border shadow-sm p-8 mb-8">
           <div className="flex items-center mb-4">
             <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mr-4">
@@ -86,12 +85,12 @@ export function SharedBrainView() {
               </p>
             </div>
           </div>
-          
+
           <p className="text-gray-700 mb-6 leading-relaxed">
-            Explore {username}'s curated collection of insights, articles, and ideas. 
+            Explore {username}'s curated collection of insights, articles, and ideas.
             MindVault helps people organize and share their knowledge with the world.
           </p>
-          
+
           <div className="flex gap-4">
             <Button
               text="Create Your Own Vault"

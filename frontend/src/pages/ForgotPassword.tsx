@@ -37,7 +37,7 @@ export function ForgotPassword() {
 
       // Navigate to reset password page with email
       navigate("/reset-password", { state: { email } });
-    } catch(err: any) {
+    } catch (err: any) {
       console.error("Forgot password error", err.response?.data || err.message);
       setError(err.response?.data?.message || "Failed to send reset code. Please try again.");
     } finally {
@@ -54,7 +54,7 @@ export function ForgotPassword() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
-      
+
       <div className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
@@ -82,8 +82,8 @@ export function ForgotPassword() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Email Address
                   </label>
-                  <Input 
-                    placeholder="Enter your email" 
+                  <Input
+                    placeholder="Enter your email"
                     type="email"
                     inputRef={emailRef}
                     onKeyDown={handleKeyDown}
@@ -91,11 +91,11 @@ export function ForgotPassword() {
                 </div>
               </div>
 
-              <Button 
-                onClick={sendResetCode} 
-                variant="primary" 
+              <Button
+                onClick={sendResetCode}
+                variant="primary"
                 text={isLoading ? "Sending..." : "Send Reset Code"}
-                fullWidth={true} 
+                fullWidth={true}
                 loading={isLoading}
               />
             </div>
@@ -105,10 +105,10 @@ export function ForgotPassword() {
                 Remember your password?{" "}
               </p>
               <Button
-                  onClick={() => navigate("/signin")}
-                  variant="normal"
-                  text="Sign in here"
-                />
+                onClick={() => navigate("/signin")}
+                variant="normal"
+                text="Sign in here"
+              />
             </div>
           </div>
         </div>

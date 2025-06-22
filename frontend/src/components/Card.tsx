@@ -56,7 +56,7 @@ export function Card({
             {title || "Untitled"}
           </h2>
         </div>
-        
+
         <div className="flex items-center text-gray-500 gap-1 flex-shrink-0">
           <a
             href={link}
@@ -83,10 +83,8 @@ export function Card({
         </div>
       </div>
 
-      {/* Content */}
       <CardContent type={type} link={link} description={description} />
 
-      {/* Footer */}
       {createdAt && (
         <div className="mt-4 pt-3 border-t border-gray-100">
           <p className="text-xs text-gray-400 text-left">

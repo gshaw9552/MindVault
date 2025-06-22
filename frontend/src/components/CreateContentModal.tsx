@@ -1,4 +1,3 @@
-// frontend/src/components/CreateContentModal.tsx
 import React, { useState, MouseEvent, useRef } from "react";
 import { CrossIcon } from "../icons/CrossIcon";
 import { Button } from "./Buttons";
@@ -28,21 +27,21 @@ export function CreateContentModal({
   const [isLoading, setIsLoading] = useState(false);
 
   const titleRef = useRef<HTMLInputElement>(null);
-  const linkRef  = useRef<HTMLInputElement>(null);
-  const typeRef  = useRef<HTMLSelectElement>(null);
-  const descRef  = useRef<HTMLTextAreaElement>(null);
+  const linkRef = useRef<HTMLInputElement>(null);
+  const typeRef = useRef<HTMLSelectElement>(null);
+  const descRef = useRef<HTMLTextAreaElement>(null);
 
   if (!open) return null;
 
   const handleBackdropClick = () => onClose();
-  const handleModalClick   = (e: MouseEvent) => e.stopPropagation();
+  const handleModalClick = (e: MouseEvent) => e.stopPropagation();
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const title       = titleRef.current?.value.trim()      || "";
-    const link        = linkRef.current?.value.trim()       || "";
-    const type        = typeRef.current?.value.trim()       || "";
-    const rawDesc     = descRef.current?.value.trim()       || "";
+    const title = titleRef.current?.value.trim() || "";
+    const link = linkRef.current?.value.trim() || "";
+    const type = typeRef.current?.value.trim() || "";
+    const rawDesc = descRef.current?.value.trim() || "";
     const description = rawDesc.length > 0 ? rawDesc : undefined;
 
     // Basic validation
@@ -71,13 +70,11 @@ export function CreateContentModal({
       embedding = Array(512).fill(0);
     }
 
-    // Clear inputs *before* closing
-    if (titleRef.current)   titleRef.current.value   = "";
-    if (linkRef.current)    linkRef.current.value    = "";
-    if (typeRef.current)    typeRef.current.value    = "";
-    if (descRef.current)    descRef.current.value    = "";
+    if (titleRef.current) titleRef.current.value = "";
+    if (linkRef.current) linkRef.current.value = "";
+    if (typeRef.current) typeRef.current.value = "";
+    if (descRef.current) descRef.current.value = "";
 
-    // Submit data
     onSubmit({ title, link: type === "note" ? "#" : link, type, description, embedding });
 
     setIsLoading(false);
@@ -129,16 +126,16 @@ export function CreateContentModal({
               </option>
               <option value="youtube">YouTube</option>
               <option value="twitter">Twitter</option>
+              <option value="instagram">Instagram</option>
               <option value="link">Link</option>
               <option value="music">Music</option>
               <option value="note">Note</option>
-              <option value="instagram">Instagram</option>
             </select>
           </label>
 
           <label className="block">
             <span className="text-sm font-medium">
-              Description 
+              Description
             </span>
             <textarea
               ref={descRef}
@@ -147,11 +144,11 @@ export function CreateContentModal({
             />
           </label>
 
-          <Button 
-            type="submit" 
-            variant="primary" 
-            text={isLoading ? "Adding…" : "Submit"} 
-            fullWidth 
+          <Button
+            type="submit"
+            variant="primary"
+            text={isLoading ? "Adding…" : "Submit"}
+            fullWidth
             disabled={isLoading}
           />
         </form>

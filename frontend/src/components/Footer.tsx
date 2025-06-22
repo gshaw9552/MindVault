@@ -17,12 +17,11 @@ export function Footer() {
               <span className="text-xl font-bold text-gray-900">MindVault</span>
             </div>
             <p className="text-gray-600 mb-4 max-w-md">
-              Your personal knowledge hub for capturing, organizing, and discovering insights. 
+              Your personal knowledge hub for capturing, organizing, and discovering insights.
               Build your personal knowledge base and share insights with others.
             </p>
           </div>
 
-          {/* Quick Links */}
           <div>
             <h3 className="font-semibold text-gray-900 mb-4">Routes</h3>
             <ul className="space-y-2">
@@ -32,7 +31,6 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Account */}
           <div>
             <h3 className="font-semibold text-gray-900 mb-4">Account</h3>
             <ul className="space-y-2">
@@ -42,7 +40,6 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center">
           <p className="text-sm text-gray-500">
             © {currentYear} MindVault. Free and open source.

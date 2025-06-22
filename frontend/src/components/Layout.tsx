@@ -13,10 +13,10 @@ export function Layout({ sidebarOpen, setSidebarOpen, onFilterChange, currentFil
   return (
     <div className="flex">
       <Sidebar
-      onFilterChange={onFilterChange}
-      currentFilter={currentFilter}
-      sidebarOpen={sidebarOpen} 
-      setSidebarOpen={setSidebarOpen} />
+        onFilterChange={onFilterChange}
+        currentFilter={currentFilter}
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen} />
       <main className={`flex-1 p-4 ${sidebarOpen ? "ml-72" : "ml-16"} bg-gray-100 min-h-screen`}>
         {children}
       </main>

@@ -66,13 +66,13 @@ export function Profile() {
                 <div className="text-sm text-gray-600">
                   Change your account password
                 </div>
-              </div>  
+              </div>
             </div>
             <Button
-                variant="outline"
-                text="Change Password"
-                onClick={() => setModalOpen(true)}
-              />
+              variant="outline"
+              text="Change Password"
+              onClick={() => setModalOpen(true)}
+            />
           </div>
 
           <div className="border-t border-gray-200 pt-6 flex justify-between">

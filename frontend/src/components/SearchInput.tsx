@@ -7,11 +7,11 @@ interface SearchInputProps {
   show?: boolean;
 }
 
-export function SearchInput({ 
-  value, 
-  onChange, 
-  placeholder = "Search...", 
-  show = true 
+export function SearchInput({
+  value,
+  onChange,
+  placeholder = "Search...",
+  show = true
 }: SearchInputProps) {
   if (!show) return null;
 

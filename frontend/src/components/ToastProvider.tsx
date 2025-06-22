@@ -34,7 +34,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             className={`px-4 py-2 rounded shadow-md text-white text-sm transition-all duration-300
               ${toast.type === "success" ? "bg-green-600"
                 : toast.type === "error" ? "bg-red-600"
-                : "bg-gray-800"}
+                  : "bg-gray-800"}
             `}
           >
             {toast.message}

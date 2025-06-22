@@ -50,7 +50,7 @@ export function VerifySignup() {
       const token = res.data.token;
       localStorage.setItem("token", token);
       navigate("/dashboard");
-    } catch(err: any) {
+    } catch (err: any) {
       console.error("Verify OTP error", err.response?.data || err.message);
       setError(err.response?.data?.message || "Verification failed. Please try again.");
     } finally {
@@ -82,7 +82,7 @@ export function VerifySignup() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
-      
+
       <div className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
@@ -112,8 +112,8 @@ export function VerifySignup() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Verification Code
                   </label>
-                  <Input 
-                    placeholder="Enter 6-digit code" 
+                  <Input
+                    placeholder="Enter 6-digit code"
                     inputRef={otpRef}
                     onKeyDown={handleKeyDown}
                     maxLength={6}
@@ -121,11 +121,11 @@ export function VerifySignup() {
                 </div>
               </div>
 
-              <Button 
-                onClick={verifyOTP} 
-                variant="primary" 
+              <Button
+                onClick={verifyOTP}
+                variant="primary"
                 text={isLoading ? "Verifying..." : "Verify Email"}
-                fullWidth={true} 
+                fullWidth={true}
                 loading={isLoading}
               />
             </div>

@@ -27,10 +27,10 @@ function Dashboard() {
   return (
     <>
       <Layout
-      onFilterChange={setFilterType}
-      currentFilter={filterType}  
-      sidebarOpen={sidebarOpen} 
-      setSidebarOpen={setSidebarOpen}
+        onFilterChange={setFilterType}
+        currentFilter={filterType}
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
       >
         {/* Add Content Modal */}
         <CreateContentModal
@@ -40,7 +40,7 @@ function Dashboard() {
         />
 
         {/* Share Brain Modal */}
-        <ShareBrainModal 
+        <ShareBrainModal
           open={shareModalOpen}
           onClose={() => setShareModalOpen(false)}
         />
@@ -53,11 +53,11 @@ function Dashboard() {
             text="Add Content"
             startIcon={<PlusIcon />}
           />
-          <Button 
+          <Button
             onClick={() => setShareModalOpen(true)}
-            variant="secondary" 
-            text="Share Brain" 
-            startIcon={<ShareIcon />} 
+            variant="secondary"
+            text="Share Brain"
+            startIcon={<ShareIcon />}
           />
           <Button
             onClick={() => navigate("/profile")}
@@ -72,9 +72,9 @@ function Dashboard() {
         {error && <p className="text-center text-red-600">{error}</p>}
 
         {/* Content Grid */}
-        {visibleItems && visibleItems.length > 0 ? 
-        (<ContentGrid items={visibleItems} onDelete={deleteContent} />) : 
-        (<EmptyState  icon={ <SearchIcon /> } title="No Content to Display"  description="use the Add Content Button to add your personlized content " />)}
+        {visibleItems && visibleItems.length > 0 ?
+          (<ContentGrid items={visibleItems} onDelete={deleteContent} />) :
+          (<EmptyState icon={<SearchIcon />} title="No Content to Display" description="use the Add Content Button to add your personlized content " />)}
       </Layout>
     </>
   );
