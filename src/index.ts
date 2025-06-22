@@ -55,8 +55,21 @@ app.post("/api/v1/signup", async (req, res) => {
       message: "User created. Please check your email for verification code.",
       requiresVerification: true
     });
-  } catch (e) {
+  } catch (e: any) {
     console.error(e);
+
+    if (e.code === 11000) {
+    const field = Object.keys(e.keyPattern)[0];
+    const message = field === "username"
+      ? "Username is already taken"
+      : field === "email"
+      ? "Email is already registered"
+      : "Duplicate value";
+
+    res.status(409).json({ message });
+    return;
+  }
+
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
