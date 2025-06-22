@@ -60,6 +60,12 @@ function Dashboard() {
             startIcon={<ShareIcon />}
           />
           <Button
+            onClick={() => navigate("/search")}
+            variant="primary"
+            text="Search"
+            startIcon={<SearchIcon />}
+          />
+          <Button
             onClick={() => navigate("/profile")}
             variant="ghost"
             text="Profile"
